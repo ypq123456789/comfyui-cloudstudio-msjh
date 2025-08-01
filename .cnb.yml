@@ -1,0 +1,14 @@
+$:
+  vscode:
+    - docker:
+        build: ./dockerfile
+      env:
+        CNB_WELCOME_CMD: echo "Welcome"
+      runner:
+        tags: cnb:arch:amd64:gpu
+      services:
+        - vscode
+        - docker
+      stages:
+        - name: stage 1
+          script: ls -al
