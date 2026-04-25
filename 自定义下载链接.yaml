@@ -1,0 +1,6 @@
+# 一个模型一行，如果模型路径中有空格，需要加英文双引号。自动按sha256或url去重（例如下面的例子，只会添加第一个文件）
+# 文件路径可以是绝对路径，也可以是相对于comfyui或comfyui/models的路径，会自动裁剪处理
+# 模型路径: 下载链接
+/workspace/comfyui/models/checkpoints/majicmixRealistic_v7.safetensors: https://cnb.cool/ai-models/digiplay/majicMIX_realistic_v7/-/lfs/7c819b6d13663ed720c2254f4fe18373107dfef2448d337913c8fc545640881e
+models/checkpoints/majicmixRealistic_v7.safetensors: https://cnb.cool/ai-models/digiplay/majicMIX_realistic_v7/-/lfs/7c819b6d13663ed720c2254f4fe18373107dfef2448d337913c8fc545640881e
+"checkpoints/带有 空格 的路径/majicmixRealistic_v7.safetensors": https://cnb.cool/ai-models/digiplay/majicMIX_realistic_v7/-/lfs/7c819b6d13663ed720c2254f4fe18373107dfef2448d337913c8fc545640881e

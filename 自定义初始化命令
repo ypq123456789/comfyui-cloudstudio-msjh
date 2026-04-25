@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# 将需要在初始化阶段执行的bash命令写在这里，一个命令一行，环境启动后会自动按顺序执行
+# 例如：
+# aria2c -x 4 -s 4 -c -d "/workspace/models/checkpoints" -o "ace_step_v1_3.5b.safetensors" "https://cnb.cool/ai-models/Comfy-Org/ACE-Step_ComfyUI_repackaged/-/lfs/f07cad74c4adce52ca14ca1bdf74cf3c14cbafb0823b95eca4459467fa369f40"

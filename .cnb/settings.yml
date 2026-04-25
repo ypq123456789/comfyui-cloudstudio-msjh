@@ -1,0 +1,6 @@
+workspace:
+  launch:
+    autoOpenWebIDE: true
+    button:
+      name: 启动 L40 预装环境
+      description: 点击此按钮启动 L40 预装环境
