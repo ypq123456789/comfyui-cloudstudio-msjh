@@ -1720,6 +1720,17 @@
             "title": "Kraken Tools"
         },
         {
+            "author": "Kyreo",
+            "description": "Nodes for generating multiple character prompt variations in a single queue run. Includes Character Prompt Manager and Variation Buffer.",
+            "files": [
+                "https://github.com/Kyreo/ComfyUI-CharacterPromptBuffer"
+            ],
+            "id": "comfyui-characterpromptbuffer",
+            "install_type": "git-clone",
+            "reference": "https://github.com/Kyreo/ComfyUI-CharacterPromptBuffer",
+            "title": "ComfyUI-CharacterPromptBuffer"
+        },
+        {
             "author": "Gourieff",
             "description": "This extension collapses 'future warning' messages in your Console",
             "files": [
@@ -13974,6 +13985,16 @@
             "install_type": "git-clone",
             "reference": "https://github.com/marduk191/ComfyUI_Matchering",
             "title": "ComfyUI_Matchering"
+        },
+        {
+            "author": "marduk191",
+            "description": "Nucleus Image (MoE diffusion) support for ComfyUI \u2014 backport of PR #13471",
+            "files": [
+                "https://github.com/marduk191/comfyui-nucleus"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/marduk191/comfyui-nucleus",
+            "title": "comfyui-nucleus"
         },
         {
             "author": "haohaocreates",
@@ -30071,6 +30092,16 @@
             "title": "ComfyUI-Flux2Klein-Conditioning-Toolkit"
         },
         {
+            "author": "xmarre",
+            "description": "A ComfyUI custom node pack implementing Diff-Aid-inspired inference-time text-conditioning patches for Flux and SDXL models.",
+            "files": [
+                "https://github.com/xmarre/ComfyUI-DiffAid-Patches"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/xmarre/ComfyUI-DiffAid-Patches",
+            "title": "ComfyUI-DiffAid-Patches"
+        },
+        {
             "author": "Pigidiy",
             "description": "Declarative UI Framework for ComfyUI Nodes. Minimalistic base class for creating UI-based audio/text/image nodes.",
             "files": [
@@ -42572,6 +42603,16 @@
             "title": "DemonAlone-nodes-ComfyUI"
         },
         {
+            "author": "DemonAlone",
+            "description": "Prompt Style Selector with Preview, Multiple Selecting, Search and Local Base.",
+            "files": [
+                "https://github.com/DemonAlone/DemonAlone-StyleSelector-ComfyUI"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/DemonAlone/DemonAlone-StyleSelector-ComfyUI",
+            "title": "DemonAlone-StyleSelector-ComfyUI"
+        },
+        {
             "author": "tabisheva",
             "description": "A tiny ComfyUI custom node that detects whether a face is in profile using SEGS eye detections.",
             "files": [
@@ -45858,6 +45899,16 @@
             "title": "ComfyUI-Inpaint-CropStitch-NB2"
         },
         {
+            "author": "amortegui84",
+            "description": "Tile-based upscaling nodes for ComfyUI \u2014 Nano Banana 2 compatible",
+            "files": [
+                "https://github.com/amortegui84/comfyui-tile-upscale-nb2"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/amortegui84/comfyui-tile-upscale-nb2",
+            "title": "Tile Upscale NB2"
+        },
+        {
             "author": "hqrz",
             "description": "ComfyUI custom node to convert Japanese text in prompts to Hepburn romaji for LTX-2.3 speech generation",
             "files": [
@@ -46331,16 +46382,6 @@
             "title": "comfyui-promptsegmentselector"
         },
         {
-            "author": "Kyreo",
-            "description": "ComfyUI custom nodes for generating character prompt variations as batch",
-            "files": [
-                "https://github.com/Kyreo/ComfyUI-CharacterPromptBuffer"
-            ],
-            "install_type": "git-clone",
-            "reference": "https://github.com/Kyreo/ComfyUI-CharacterPromptBuffer",
-            "title": "comfyui-characterpromptbuffer"
-        },
-        {
             "author": "Phykrex",
             "description": "Custom nodes for ComfyUI by Momo.",
             "files": [
@@ -46369,6 +46410,146 @@
             "install_type": "git-clone",
             "reference": "https://github.com/uonr/comfyui-uonr-nodes",
             "title": "comfyui-uonr-nodes"
+        },
+        {
+            "author": "wos-ai-studio",
+            "description": "Add title, comment and memo functions to nodes, which support custom styles and automatic word wrapping, compatible with Nodes 2.0.",
+            "files": [
+                "https://github.com/xujianjian2004/ComfyUI-Title-Memo"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/xujianjian2004/ComfyUI-Title-Memo",
+            "title": "ComfyUI-Title-Memo"
+        },
+        {
+            "author": "ussaaron",
+            "description": "ComfyUI nodes for stitching a still frame onto the start or end of an IMAGE video batch and trimming extra tail frames with optional audio sync alignment.",
+            "files": [
+                "https://github.com/headline-design/comfyui-framefuse"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/headline-design/comfyui-framefuse",
+            "title": "FrameFuse"
+        },
+        {
+            "author": "takkun",
+            "description": "ComfyUI StepByStep Sampler is a plugin for ComfyUI that provides a step-by-step sampling method for image generation. It allows users to generate images in a more controlled and iterative manner, making it easier to achieve desired results.",
+            "files": [
+                "https://github.com/TakkunRed/ComfyUI-StepByStep-Sampler"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/TakkunRed/ComfyUI-StepByStep-Sampler",
+            "title": "ComfyUI-StepByStep-Sampler"
+        },
+        {
+            "author": "serhiiyashyn-sf",
+            "description": "Batch-aware character centering for ComfyUI. Given a character sheet (multiple angles), scales every image so the face ends up at the same size and canvas position \u2014 including back-view angles, via a silhouette fallback tied to the batch's face scale. Includes a Fine-Tune node for per-image zoom/nudge with a live canvas preview, and an Anime Face Detect node for crop+mask using lbpcascade_animeface.",
+            "files": [
+                "https://github.com/serhiiyashyn-sf/comfyui-face-aligned-center"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/serhiiyashyn-sf/comfyui-face-aligned-center",
+            "title": "Face-Aligned Center"
+        },
+        {
+            "author": "newgrit1004",
+            "description": "ComfyUI node wrapping qwen3-tts-triton for 7-mode Qwen3-TTS inference (Triton kernel fusion + TurboQuant KV cache)",
+            "files": [
+                "https://github.com/newgrit1004/ComfyUI-Qwen3-TTS-Triton"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/newgrit1004/ComfyUI-Qwen3-TTS-Triton",
+            "title": "Qwen3 Triton TTS"
+        },
+        {
+            "author": "mahilkr",
+            "description": "ComfyUI custom nodes for immersive 3D world generation using Tencent HunyuanWorld 1.0",
+            "files": [
+                "https://github.com/krmahil/comfyui-hunyuan-world"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/krmahil/comfyui-hunyuan-world",
+            "title": "HunyuanWorld 3D World Generation"
+        },
+        {
+            "author": "machinedelusions",
+            "description": "Experimental tools and motion controls for LTX-Video in ComfyUI",
+            "files": [
+                "https://github.com/filliptm/ComfyUI-FL-LTXTools"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/filliptm/ComfyUI-FL-LTXTools",
+            "title": "ComfyUI-FL-LTXTools"
+        },
+        {
+            "author": "intelliprompt",
+            "description": "intelliPrompt - An intelligent prompt optimizer for ComfyUI that fixes typos, balances parentheses, and enhances prompts",
+            "files": [
+                "https://github.com/galpt/comfy-intelliPrompt"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/galpt/comfy-intelliPrompt",
+            "title": "comfy-intelliprompt"
+        },
+        {
+            "author": "enviral-design",
+            "description": "Small, dependency-light ComfyUI utility nodes from Enviral Design.",
+            "files": [
+                "https://github.com/EnviralDesign/comfyUI-enviral-design-node-pack"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/EnviralDesign/comfyUI-enviral-design-node-pack",
+            "title": "Enviral Design Node Pack"
+        },
+        {
+            "author": "eniewold",
+            "description": "Use ComfyUI workflows as reusable subworkflows via Subworkflow Input, Subworkflow Output, and Subworkflow nodes",
+            "files": [
+                "https://github.com/eniewold/ComfyUI-Subworkflow"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/eniewold/ComfyUI-Subworkflow",
+            "title": "Subworkflow (reusable workflows)"
+        },
+        {
+            "author": "dorpxam",
+            "description": "48-Layers Latent Previewer for Lightrick's LTX-2 model.",
+            "files": [
+                "https://github.com/dorpxam/ComfyUI-LTX2-Microscope"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/dorpxam/ComfyUI-LTX2-Microscope",
+            "title": "LTX-2 Microscope"
+        },
+        {
+            "author": "dailydoseofaiart",
+            "description": "A node to drop frames from the output images to force the video to a lower FPS at the same playback speed.",
+            "files": [
+                "https://github.com/dailydoseofaiart/ComfyUI-FPSFrameDrop"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/dailydoseofaiart/ComfyUI-FPSFrameDrop",
+            "title": "ComfyUI-FPSFrameDrop"
+        },
+        {
+            "author": "Emiewn",
+            "description": "Custom nodes for ComfyUI: Drag & drop image paste, interactive UI crop, WAN I2V bucket resolution, and GIMM-VFI frame interpolation.",
+            "files": [
+                "https://github.com/emiewnn/ComfyUI-Emiewn-Nodes"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/emiewnn/ComfyUI-Emiewn-Nodes",
+            "title": "ComfyUI-Emiewn-Nodes"
+        },
+        {
+            "author": "jetthuangai",
+            "description": "GPU-powered pro-grade image suite cho retouch ch\u00e2n dung. v0.1.0 alpha: Frequency Separation (N-01) + Sub-Pixel Mask Refiner (N-02). Kornia core, tensor thu\u1ea7n kh\u00f4ng r\u1eddi VRAM.",
+            "files": [
+                "https://github.com/jetthuangai/ComfyUI-JH-PixelPro"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/jetthuangai/ComfyUI-JH-PixelPro",
+            "title": "ComfyUI-JH-PixelPro"
         },
         {
             "author": "Ser-Hilary",
