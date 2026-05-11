@@ -40027,6 +40027,25 @@
             "title": "ComfyUI-SimpleChat"
         },
         {
+            "author": "Moeblack",
+            "description": "AI Tool Use API for Anima anime/illustration image generation. Supports MCP Server (native image display in Cursor/Claude), HTTP API, and CLI.",
+            "files": [
+                "https://github.com/Moeblack/ComfyUI-AnimaTool"
+            ],
+            "id": "comfyui-animatool",
+            "install_type": "git-clone",
+            "reference": "https://github.com/Moeblack/ComfyUI-AnimaTool",
+            "tags": [
+                "anima",
+                "anime",
+                "illustration",
+                "mcp",
+                "tool-use",
+                "api"
+            ],
+            "title": "ComfyUI-AnimaTool"
+        },
+        {
             "author": "Braeden90000",
             "description": "Load images from files or URLs with live preview and source switching.",
             "files": [
@@ -45334,6 +45353,17 @@
             "title": "ComfyUI VRM Pose Editor 3D"
         },
         {
+            "author": "ketle-man",
+            "description": "Workflow management and generation UI plugin. Browse, organize, and execute workflows with auto-generated parameter editing, AI prompt assistant (Ollama), JSON syntax highlighting, Eagle integration, and multi-language support (EN/JA/ZH).",
+            "files": [
+                "https://github.com/ketle-man/ComfyUI-Workflow-Studio"
+            ],
+            "id": "comfyui-workflow-studio",
+            "install_type": "git-clone",
+            "reference": "https://github.com/ketle-man/ComfyUI-Workflow-Studio",
+            "title": "ComfyUI-Workflow-Studio"
+        },
+        {
             "author": "senjinthedragon",
             "category": "utils/tags",
             "description": "Filters and rewrites gendered vocabulary in Danbooru tags and natural language prompts to fix female-biased output from models like TIPO.",
@@ -46352,6 +46382,36 @@
             "title": "ComfyUI-Lora-Pipeline"
         },
         {
+            "author": "andreszs",
+            "description": "Modern OpenPose pose editor for ComfyUI with collections, JSON import/export, background image support, and compatibility with legacy pose JSON.",
+            "files": [
+                "https://github.com/andreszs/ComfyUI-OpenPose-Studio"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/andreszs/ComfyUI-OpenPose-Studio",
+            "title": "ComfyUI-OpenPose-Studio"
+        },
+        {
+            "author": "andreszs",
+            "description": "Ultralytics workflow and editor tools for ComfyUI with enhanced preview and UI integration.",
+            "files": [
+                "https://github.com/andreszs/ComfyUI-Ultralytics-Studio"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/andreszs/ComfyUI-Ultralytics-Studio",
+            "title": "ComfyUI-Ultralytics-Studio"
+        },
+        {
+            "author": "andreszs",
+            "description": "Style selection and AI-assisted preset pipeline for ComfyUI, including manual and LLM-based style workflows.",
+            "files": [
+                "https://github.com/andreszs/ComfyUI-Styler-Pipeline"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/andreszs/ComfyUI-Styler-Pipeline",
+            "title": "ComfyUI-Styler-Pipeline"
+        },
+        {
             "author": "river-side",
             "description": "A custom node to resize your image to model-specific resolution",
             "files": [
@@ -46840,6 +46900,113 @@
             "install_type": "git-clone",
             "reference": "https://github.com/ankushgawande/comfyui-scene-framer",
             "title": "comfyui-scene-framer"
+        },
+        {
+            "author": "chkeeho80",
+            "description": "Structured + chaos-based prompt generation system for ComfyUI. Generate less. Evolve more.",
+            "files": [
+                "https://github.com/chkeeho80/PromptDeckComposer"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/chkeeho80/PromptDeckComposer",
+            "title": "PromptDeckComposer"
+        },
+        {
+            "author": "AISeDam",
+            "description": "Per-region prompt and LoRA control for SD1.5, SDXL, Z-Image, and Qwen \u2014 compatible with multiple model architectures.",
+            "files": [
+                "https://github.com/AISeDam/ComfyUI_RP_Cast"
+            ],
+            "id": "comfyui_rp_cast",
+            "install_type": "git-clone",
+            "reference": "https://github.com/AISeDam/ComfyUI_RP_Cast",
+            "title": "ComfyUI_RP_Cast"
+        },
+        {
+            "author": "akashzeno",
+            "description": "Predicts Physical FPS (PhyFPS) from video using the Visual Chronometer model from the Pulse of Motion paper. Includes SDPA-optimized attention, device selection, progress tracking, and auto-downloads the model from HuggingFace.",
+            "files": [
+                "https://github.com/akashzeno/ComfyUI-PulseOfMotion"
+            ],
+            "id": "comfyui-pulse-of-motion",
+            "install_type": "git-clone",
+            "reference": "https://github.com/akashzeno/ComfyUI-PulseOfMotion",
+            "title": "ComfyUI-PulseOfMotion"
+        },
+        {
+            "author": "destinyfaux",
+            "description": "High-fidelity, architecture-aware LoRA fusion for Z-Image (S3-DiT). Features simultaneous TIES-merging, per-block tuning, and no-loss export.",
+            "files": [
+                "https://github.com/destinyfaux/Z-Fuse"
+            ],
+            "id": "z-fuse",
+            "install_type": "git-clone",
+            "reference": "https://github.com/destinyfaux/Z-Fuse",
+            "title": "Z-FUSE: Surgical LoRA Orchestrator"
+        },
+        {
+            "author": "Amatsukast",
+            "description": "Workflow toolkit for ComfyUI. Includes BiRefNet background removal, dynamic prompt/image variable system for batch generation, chroma key tools, and more utilities.",
+            "files": [
+                "https://github.com/Amatsukast/ComfyUI-SBTools"
+            ],
+            "id": "sbtools",
+            "install_type": "git-clone",
+            "reference": "https://github.com/Amatsukast/ComfyUI-SBTools",
+            "title": "ComfyUI-SBTools"
+        },
+        {
+            "author": "kenyonxu",
+            "description": "A LoRA loader that fetches and displays Civitai metadata including trigger words and preview images, with local caching and NSFW blur support.",
+            "files": [
+                "https://github.com/kenyonxu/ComfyUI_KaiUtilities"
+            ],
+            "id": "kai-civitai-lora-loader",
+            "install_type": "git-clone",
+            "reference": "https://github.com/kenyonxu/ComfyUI_KaiUtilities",
+            "title": "Kai Civitai LoRA Loader"
+        },
+        {
+            "author": "pixaroma",
+            "description": "Creative suite for ComfyUI with 3D Builder, AudioReact, Image Composer, Paint Studio, Save Mp4, Image Crop, Image Compare, Note Pixaroma, Label, Resolution, Preview Image, and Align Pixaroma (canvas snap & alignment guides). Layers, transforms, AI background removal, audio-reactive video, and more.",
+            "files": [
+                "https://github.com/pixaroma/ComfyUI-Pixaroma"
+            ],
+            "id": "comfyui-pixaroma",
+            "install_type": "git-clone",
+            "reference": "https://github.com/pixaroma/ComfyUI-Pixaroma",
+            "title": "ComfyUI-Pixaroma"
+        },
+        {
+            "author": "Motif Technologies",
+            "description": "Custom nodes for Motif-Video 2B (Motif Technologies) text-to-video and image-to-video diffusion model. Includes model loaders, samplers, and a workflow-driven automatic model download dialog.",
+            "files": [
+                "https://github.com/MotifTechnologies/ComfyUI-MotifVideo2B"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/MotifTechnologies/ComfyUI-MotifVideo2B",
+            "title": "ComfyUI-MotifVideo2B"
+        },
+        {
+            "author": "SiliconFlow",
+            "description": "[a/BizyAirPlus](https://github.com/siliconflow/BizyAirPlus) Run your workflow on cloud.",
+            "files": [
+                "https://github.com/siliconflow/BizyAirPlus"
+            ],
+            "id": "bizyairplus",
+            "install_type": "git-clone",
+            "reference": "https://github.com/siliconflow/BizyAirPlus",
+            "title": "BizyAirPlus"
+        },
+        {
+            "author": "thomaskippster",
+            "description": "Bridge for the standalone ComfyUI Model Downloader. Analyzes workflows, finds missing models via AI, and manages your archive to save SSD space.",
+            "files": [
+                "https://github.com/thomaskippster/comfymodeldownloader"
+            ],
+            "install_type": "git-clone",
+            "reference": "https://github.com/thomaskippster/comfymodeldownloader",
+            "title": "ComfyUI Model Downloader Bridge"
         },
         {
             "author": "Ser-Hilary",

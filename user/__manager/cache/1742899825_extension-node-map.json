@@ -1804,6 +1804,23 @@
             "title_aux": "ComfyUI-APQNodes"
         }
     ],
+    "https://github.com/AISeDam/ComfyUI_RP_Cast": [
+        [
+            "RPConverter",
+            "RPKSampler",
+            "RPPromptParser",
+            "RPRatioParser",
+            "RPRegionalDetailer",
+            "RPRegionalDetailerQwen",
+            "RPRegionalDetailerZImage",
+            "RPTxt2ImgGemini",
+            "RPTxt2ImgGrok",
+            "RPTxt2ImgOpenAI"
+        ],
+        {
+            "title_aux": "ComfyUI_RP_Cast"
+        }
+    ],
     "https://github.com/AIToldMeTo/comfyui-cache-cleaner": [
         [
             "CacheCleaner"
@@ -2725,6 +2742,23 @@
         ],
         {
             "title_aux": "ComfyUI-Text2Json"
+        }
+    ],
+    "https://github.com/Amatsukast/ComfyUI-SBTools": [
+        [
+            "SBTools_AlphaToChromaKey",
+            "SBTools_BiRefNet",
+            "SBTools_MatchColor",
+            "SBTools_MatchColorBalance",
+            "SBTools_MatchLuminance",
+            "SBTools_VariableBuilder",
+            "SBTools_VariableCombiner",
+            "SBTools_VariableFolder",
+            "SBTools_VariableImageLoader",
+            "SBTools_VariablePrompt"
+        ],
+        {
+            "title_aux": "ComfyUI-SBTools"
         }
     ],
     "https://github.com/Amorano/Jovi_Capture": [
@@ -6692,6 +6726,7 @@
     ],
     "https://github.com/Deno2026/comfyui-deno-custom-nodes": [
         [
+            "DenoAdvancedImageSourceLoader",
             "DenoLTX23PresetLoader",
             "DenoLTXModelDownloader",
             "DenoLTXMultiLoraLoader",
@@ -15798,6 +15833,18 @@
         ],
         {
             "title_aux": "ComfyUI-RMAutomation"
+        }
+    ],
+    "https://github.com/MotifTechnologies/ComfyUI-MotifVideo2B": [
+        [
+            "EmptyMotifLatent",
+            "MotifImageEncode",
+            "MotifTextEncode",
+            "MotifTextEncoderLoader",
+            "MotifVAELoader"
+        ],
+        {
+            "title_aux": "ComfyUI-MotifVideo2B"
         }
     ],
     "https://github.com/MovieLabs/comfyui-movielabs-util": [
@@ -26517,6 +26564,16 @@
             "title_aux": "comfyui-ethnicity_hairstyle_clip_encoder"
         }
     ],
+    "https://github.com/akashzeno/ComfyUI-PulseOfMotion": [
+        [
+            "LoadVisualChronometer",
+            "PredictPhyFPS",
+            "PredictPhyFPSBatch"
+        ],
+        {
+            "title_aux": "ComfyUI-PulseOfMotion"
+        }
+    ],
     "https://github.com/akatz-ai/ComfyUI-AKatz-Nodes": [
         [
             "AK_AdjustDepthmapBrightness",
@@ -27194,6 +27251,9 @@
         [
             "FaceSequenceBatch",
             "FrameRangedFaceLoader",
+            "LTXVApplyNeutralMask",
+            "LTXVEditAnythingApply",
+            "LTXVResizeReferenceByMask",
             "ReservedRegionFrameComposer"
         ],
         {
@@ -27720,6 +27780,24 @@
         ],
         {
             "title_aux": "CLIP Directional Prompt Attention"
+        }
+    ],
+    "https://github.com/andreszs/ComfyUI-OpenPose-Studio": [
+        [
+            "OPS_ShowString",
+            "OpenPoseStudio"
+        ],
+        {
+            "title_aux": "ComfyUI-OpenPose-Studio"
+        }
+    ],
+    "https://github.com/andreszs/ComfyUI-Ultralytics-Studio": [
+        [
+            "ULS_ShowString",
+            "UltralyticsEditor"
+        ],
+        {
+            "title_aux": "ComfyUI-Ultralytics-Studio"
         }
     ],
     "https://github.com/angeloshredder/StableCascadeResizer": [
@@ -30059,7 +30137,7 @@
             "PipelineMemoryBarrier"
         ],
         {
-            "title_aux": "comfyui-pipeline-barrier"
+            "title_aux": "ComfyUI-PipelineBarrier"
         }
     ],
     "https://github.com/brucew4yn3rp/ComfyUI_SelectiveMetadata": [
@@ -32245,6 +32323,14 @@
         ],
         {
             "title_aux": "ComfyUI-Chibi-Nodes"
+        }
+    ],
+    "https://github.com/chkeeho80/PromptDeckComposer": [
+        [
+            "PromptDeckComposer"
+        ],
+        {
+            "title_aux": "PromptDeckComposer"
         }
     ],
     "https://github.com/choey/Comfy-Topaz": [
@@ -35279,6 +35365,17 @@
         ],
         {
             "title_aux": "demofusion-comfyui"
+        }
+    ],
+    "https://github.com/destinyfaux/Z-Fuse": [
+        [
+            "ZFuseBake",
+            "ZFuseLoRAStack",
+            "ZFuseOrchestrator",
+            "ZFuseVisualLayerTuner"
+        ],
+        {
+            "title_aux": "Z-FUSE: Surgical LoRA Orchestrator"
         }
     ],
     "https://github.com/dev-hitem/hitems3D-comfyUI": [
@@ -43904,6 +44001,14 @@
         ],
         {
             "title_aux": "qq-nodes-comfyui"
+        }
+    ],
+    "https://github.com/kenyonxu/ComfyUI_KaiUtilities": [
+        [
+            "KaiCivitaiLoRALoader"
+        ],
+        {
+            "title_aux": "Kai Civitai LoRA Loader"
         }
     ],
     "https://github.com/ketle-man/comfyui-2dpose-editor": [
@@ -53029,6 +53134,28 @@
         ],
         {
             "title_aux": "ComfyUI-Upscale-CUDAspeed"
+        }
+    ],
+    "https://github.com/pixaroma/ComfyUI-Pixaroma": [
+        [
+            "NotifyPixaroma",
+            "Pixaroma3D",
+            "PixaromaAudioStudio",
+            "PixaromaCompare",
+            "PixaromaCrop",
+            "PixaromaImageComposition",
+            "PixaromaLabel",
+            "PixaromaNote",
+            "PixaromaPaint",
+            "PixaromaPreview",
+            "PixaromaReferenceNode",
+            "PixaromaResolution",
+            "PixaromaSaveMp4",
+            "PixaromaShowText",
+            "Pixaroma_VueReferenceNode"
+        ],
+        {
+            "title_aux": "ComfyUI-Pixaroma"
         }
     ],
     "https://github.com/pixelpainter/UI-Decorators": [
