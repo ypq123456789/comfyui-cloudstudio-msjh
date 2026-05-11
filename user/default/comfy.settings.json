@@ -372,5 +372,5 @@
     "Comfy.InstalledVersion": "1.42.15",
     "Comfy.TutorialCompleted": true,
     "Comfy.Queue.History.Expanded": true,
-    "Comfy.RightSidePanel.IsOpen": true
+    "Comfy.RightSidePanel.IsOpen": false
 }
