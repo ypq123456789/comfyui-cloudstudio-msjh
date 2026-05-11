@@ -8174,6 +8174,14 @@
             "title_aux": "comfyui-ea-nodes"
         }
     ],
+    "https://github.com/Experience-Monks/Monks-Prompt-Enhancer-ComfyUI-Node": [
+        [
+            "MonksPromptEnhancer"
+        ],
+        {
+            "title_aux": "Monks-Prompt-Enhancer-ComfyUI-Node"
+        }
+    ],
     "https://github.com/ExponentialML/ComfyUI_ModelScopeT2V": [
         [
             "ModelScopeT2VLoader"
@@ -10034,6 +10042,16 @@
         ],
         {
             "title_aux": "ComfyUI aichemy nodes"
+        }
+    ],
+    "https://github.com/HDembinski/comfyui_plugins": [
+        [
+            "NativeImageSizes",
+            "TextEncodeQwenImageEditAlt",
+            "TextEncodeQwenImageEditPlusAlt"
+        ],
+        {
+            "title_aux": "comfyui-plugins"
         }
     ],
     "https://github.com/HECer/ComfyUI-FilePathCreator": [
@@ -15198,6 +15216,14 @@
             "title_aux": "ComfyUI-Flow-Assistor"
         }
     ],
+    "https://github.com/Mervent/comfyui-model-randomizer": [
+        [
+            "ModelRandomizer"
+        ],
+        {
+            "title_aux": "comfyui-model-randomizer"
+        }
+    ],
     "https://github.com/MetaGLM/ComfyUI-ZhipuAI-Platform": [
         [
             "VideoReportData",
@@ -19134,6 +19160,15 @@
         ],
         {
             "title_aux": "ComfyUI-LexTools"
+        }
+    ],
+    "https://github.com/SOLRICKS/comfyui-solricks": [
+        [
+            "VideoAdaptiveAA",
+            "VideoTAADLAA"
+        ],
+        {
+            "title_aux": "comfyui-solricks"
         }
     ],
     "https://github.com/SS-snap/ComfyUI-Ad_scheduler": [
@@ -28937,6 +28972,16 @@
             "title_aux": "ComfyUI_3DGaussianSplatting"
         }
     ],
+    "https://github.com/bemoregt/ComfyUI_AdversarialAttack": [
+        [
+            "AdversarialAttack",
+            "ClassifyImage",
+            "LoadResNet18"
+        ],
+        {
+            "title_aux": "ComfyUI_AdversarialAttack"
+        }
+    ],
     "https://github.com/bemoregt/ComfyUI_CustomNode_Image2Spectrum": [
         [
             "Image_Spectrum"
@@ -28953,6 +28998,15 @@
         ],
         {
             "title_aux": "ComfyUI_DCT"
+        }
+    ],
+    "https://github.com/bemoregt/ComfyUI_FFTNet": [
+        [
+            "FFTNetGenerate",
+            "LoadFFTNetModel"
+        ],
+        {
+            "title_aux": "ComfyUI_FFTNet"
         }
     ],
     "https://github.com/bemoregt/ComfyUI_FourierDomainAdaptation": [
@@ -29783,6 +29837,18 @@
         ],
         {
             "title_aux": "comfyui_wfc_like"
+        }
+    ],
+    "https://github.com/bnwa/comfy_combos": [
+        [
+            "comfy_combos_Flux1DimensionsSelector",
+            "comfy_combos_SDXLDimensionsSelector",
+            "comfy_combos_SamplerSelector",
+            "comfy_combos_SchedulerSelector",
+            "comfy_combos_ZImageDimensionsSelector"
+        ],
+        {
+            "title_aux": "Comfy Combos"
         }
     ],
     "https://github.com/bobmagicii/comfykit-custom-nodes": [
@@ -43842,6 +43908,14 @@
             "title_aux": "comfyui_GLM_TTS"
         }
     ],
+    "https://github.com/karcsiha/comfyUi-deflicker": [
+        [
+            "DeflickerFrames"
+        ],
+        {
+            "title_aux": "comfyUi-deflicker"
+        }
+    ],
     "https://github.com/karthikg-09/ComfyUI-Vton-Mask": [
         [
             "ComfyUIVtonMaskGenerator",
@@ -48506,6 +48580,53 @@
         ],
         {
             "title_aux": "PromptFlow"
+        }
+    ],
+    "https://github.com/machinepainting/ComfyUI-MachinePaintingNodes": [
+        [
+            "ApplyMask",
+            "AutoLevels",
+            "BlurPro",
+            "Boolean",
+            "BooleanInputValueSwitch",
+            "BooleanInvert",
+            "BooleanMasterSwitch",
+            "BooleanSwitchValueOutput",
+            "BrightnessContrastAdjust",
+            "ChannelMaskPro",
+            "ColorAdjustBlend",
+            "ColorMatchBlend",
+            "ColorWheelView",
+            "CurvesAdjustPro",
+            "DynamicValueRange",
+            "FrequencyCombine",
+            "FrequencySeparate",
+            "HistogramView",
+            "ImageBlendPro",
+            "InpaintMaskPro",
+            "LUTApply",
+            "LevelsAdjust",
+            "MP_ImageMaskSwitch",
+            "MaskCompositePro2X",
+            "MaskCompositePro6X",
+            "MaskEditor",
+            "MegaSliderMasterValue",
+            "MegaSliderX1",
+            "MegaSliderX12",
+            "MegaSliderX3",
+            "MegaSliderX6",
+            "NoiseGrainPro",
+            "RemoveBackgroundPro",
+            "SeedLock",
+            "SelectiveColorPro",
+            "ShowText",
+            "ShowValue",
+            "TextNotes",
+            "TextString",
+            "ZImageEmptyLatentImage"
+        ],
+        {
+            "title_aux": "MachinePainting Nodes"
         }
     ],
     "https://github.com/maepopi/Diffusers-in-ComfyUI": [
@@ -53312,6 +53433,14 @@
         ],
         {
             "title_aux": "ComfyUI-MultiGPU"
+        }
+    ],
+    "https://github.com/polly-creative/ComfyUI_Polly_Nodes": [
+        [
+            "PollyEmissiveColor"
+        ],
+        {
+            "title_aux": "ComfyUI_Polly_Nodes"
         }
     ],
     "https://github.com/polym/ComfyUI-musubi": [
@@ -59668,6 +59797,14 @@
         ],
         {
             "title_aux": "ComfyUI-KiraLoraEQ"
+        }
+    ],
+    "https://github.com/throttlekitty/tkNodes": [
+        [
+            "LTXVBlockLoop"
+        ],
+        {
+            "title_aux": "tkNodes"
         }
     ],
     "https://github.com/tianguanggliu/Utools": [
