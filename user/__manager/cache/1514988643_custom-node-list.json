@@ -45384,17 +45384,6 @@
             "title": "ComfyUI-Workflow-Studio"
         },
         {
-            "author": "ketle-man",
-            "description": "A node for looping through images in a folder with a visual 3-pane library UI, preset support, and i18n (EN/JA/ZH).",
-            "files": [
-                "https://github.com/ketle-man/comfyui-image-feeder"
-            ],
-            "id": "comfyui-image-feeder",
-            "install_type": "git-clone",
-            "reference": "https://github.com/ketle-man/comfyui-image-feeder",
-            "title": "ComfyUI Image Feeder"
-        },
-        {
             "author": "senjinthedragon",
             "category": "utils/tags",
             "description": "Filters and rewrites gendered vocabulary in Danbooru tags and natural language prompts to fix female-biased output from models like TIPO.",
@@ -47182,17 +47171,6 @@
             "install_type": "git-clone",
             "reference": "https://github.com/wuwukaka/ComfyUI-BodyRatioMapper",
             "title": "ComfyUI-BodyRatioMapper"
-        },
-        {
-            "author": "gzsiang",
-            "description": "VolcEngine (\u706b\u5c71\u5f15\u64ce) video and image generation nodes. Supports Seedance (text-to-video, image-to-video with audio reference) and Seedream (text-to-image, image-to-image) models via Ark API.",
-            "files": [
-                "https://github.com/gzsiang/ComfyUI-VolcEngine"
-            ],
-            "id": "comfyui-volcengine",
-            "install_type": "git-clone",
-            "reference": "https://github.com/gzsiang/ComfyUI-VolcEngine",
-            "title": "ComfyUI-VolcEngine"
         },
         {
             "author": "KingManiya",
