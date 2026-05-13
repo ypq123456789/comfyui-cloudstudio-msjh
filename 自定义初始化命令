@@ -8,7 +8,7 @@
 rm -f /workspace/.cnb-xu/script_py/nsfw_checker_by_xu.cpython-312-x86_64-linux-gnu.so
 
 # 安装Tencent Cloud CodeBuddy扩展
-code --install-extension TencentCloud.codebuddy
+code-server --install-extension Tencent-Cloud.coding-copilot
 
 # 启动CNB域名持续上报（后台运行）
 nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
