@@ -3,12 +3,11 @@
 # 将需要在初始化阶段执行的bash命令写在这里，一个命令一行，环境启动后会自动按顺序执行
 # 例如：
 # aria2c -x 4 -s 4 -c -d "/workspace/models/checkpoints" -o "ace_step_v1_3.5b.safetensors" "https://cnb.cool/ai-models/Comfy-Org/ACE-Step_ComfyUI_repackaged/-/lfs/f07cad74c4adce52ca14ca1bdf74cf3c14cbafb0823b95eca4459467fa369f40"
+# 启动CNB域名持续上报（后台运行）
+nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
 
 # 移除NSFW检测模块
 rm -f /workspace/.cnb-xu/script_py/nsfw_checker_by_xu.cpython-312-x86_64-linux-gnu.so
 
 # 安装Tencent Cloud CodeBuddy扩展
 code-server --install-extension Tencent-Cloud.coding-copilot
-
-# 启动CNB域名持续上报（后台运行）
-nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
