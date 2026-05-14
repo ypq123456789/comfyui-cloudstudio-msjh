@@ -69,45 +69,59 @@ all_sha256_dict = _all_sha256_dict
 
 # === 下载工具 ===
 def aria2c(file_path, url, extra_args=None):
-    """使用 aria2c 下载文件"""
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    cmd = ["aria2c", "-x", "16", "-s", "16", "-k", "1M", "-o", file_path, url]
+    """使用 aria2c 下载文件到指定路径"""
+    dir_path = os.path.dirname(file_path)
+    filename = os.path.basename(file_path)
+    os.makedirs(dir_path, exist_ok=True)
+    # aria2c 的 -d 指定目录，-o 指定文件名（相对于 -d）
+    cmd = ["aria2c", "-x", "16", "-s", "16", "-k", "1M", "-d", dir_path, "-o", filename, url]
     if extra_args:
         cmd.extend(extra_args)
     try:
-        subprocess.run(cmd, check=True, capture_output=True)
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        logger.info(f"Downloaded: {file_path}")
         return True
+    except subprocess.CalledProcessError as e:
+        logger.error(f"aria2c download failed for {url}")
+        if e.stderr:
+            logger.error(f"stderr: {e.stderr[:500]}")
+        return False
     except Exception as e:
-        logger.warning(f"aria2c download failed: {e}")
+        logger.error(f"aria2c download failed: {e}")
         return False
 
 
 # === 核心接口 ===
 def find_or_download_model(folder_name, filename, auto_download=True):
     """在本地查找模型文件，如未找到且 auto_download=True 则尝试下载"""
-    # 首先在标准目录中查找
     models_base = "/workspace/models"
     folder_path = os.path.join(models_base, folder_name)
     full_path = os.path.join(folder_path, filename)
+
     if os.path.exists(full_path):
         return full_path
 
-    # 也检查 cnb_cache 目录
     cache_path = os.path.join("/workspace/models_cnb_cache", folder_name, filename)
     if os.path.exists(cache_path):
         return cache_path
 
-    # 尝试在 all_file_dict 中查找下载链接
     if auto_download:
+        logger.info(f"[find_or_download_model] {folder_name}/{filename} not found locally, searching in all_file_dict...")
+        found = False
         for repo_name, files in _all_file_dict.items():
             if filename in files:
                 url = files[filename]
-                # 确定下载目标路径
-                os.makedirs(folder_path, exist_ok=True)
-                logger.info(f"Downloading {filename} from {url}")
+                found = True
+                logger.info(f"[find_or_download_model] Found URL for {filename} in repo [{repo_name}]: {url[:80]}...")
                 if aria2c(full_path, url):
-                    return full_path
+                    if os.path.exists(full_path):
+                        logger.info(f"[find_or_download_model] Download success: {full_path}")
+                        return full_path
+                    else:
+                        logger.error(f"[find_or_download_model] Download reported success but file not at {full_path}")
                 break
+        if not found:
+            logger.warning(f"[find_or_download_model] No download URL found for {folder_name}/{filename}")
 
     return None
 
