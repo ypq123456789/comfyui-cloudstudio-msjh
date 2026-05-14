@@ -53,6 +53,25 @@ cmd.run()
 " 2>/dev/null
   rm -f "$STUB_DIR/nsfw_checker_by_xu.c"
   echo "NSFW checker stub built and replaced"
+  # 修改 patch_by_xu.py，在 patch_nodes() 后注入禁用 NSFW 的代码
+  sed -i 's/    patch_nodes()\n    if args.auto_launch:/    patch_nodes()\n    import hook2_by_xu\n    hook2_by_xu.enable_check = False\n    if args.auto_launch:/' "$STUB_DIR/patch_by_xu.py" 2>/dev/null
+  # 用python做更可靠的替换
+  python3 -c "
+p='$STUB_DIR/patch_by_xu.py'
+import os
+if os.path.exists(p):
+    with open(p,'r') as f: c=f.read()
+    old='    patch_nodes()\n    if args.auto_launch:'
+    new='    patch_nodes()\n    import hook2_by_xu\n    hook2_by_xu.enable_check = False\n    if args.auto_launch:'
+    if old in c and 'enable_check' not in c:
+        c=c.replace(old,new)
+        with open(p,'w') as f: f.write(c)
+        print('patch_by_xu.py patched: NSFW disabled')
+    elif 'enable_check' in c:
+        print('patch_by_xu.py already has NSFW disable')
+    else:
+        print('patch_by_xu.py: pattern not found')
+" 2>/dev/null
 fi
 
 # 安装Tencent Cloud CodeBuddy扩展
