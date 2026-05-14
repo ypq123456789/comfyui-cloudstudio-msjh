@@ -5,3 +5,13 @@
 #models/checkpoints/majicmixRealistic_v7.safetensors: https://cnb.cool/ai-models/digiplay/majicMIX_realistic_v7/-/lfs/7c819b6d13663ed720c2254f4fe18373107dfef2448d337913c8fc545640881e
 #"checkpoints/带有 空格 的路径/majicmixRealistic_v7.safetensors": https://cnb.cool/ai-models/digiplay/majicMIX_realistic_v7/-/lfs/7c819b6d13663ed720c2254f4fe18373107dfef2448d337913c8fc545640881e
 models/diffusion_models/mPMix_NSFW_V9_fp8.safetensors: https://cnb.cool/bacon159-2026/model/-/lfs/96b875e4e3904555688998a07c45166322f98bb566f870b7d7e7f86cb5aecf70
+models/diffusion_models/z_image_turbo_bf16.safetensors: https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors
+models/text_encoders/qwen_3_4b.safetensors: https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b.safetensors
+models/vae/ae.safetensors: https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors
+models/diffusion_models/qwen_image_fp8_e4m3fn.safetensors: https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_fp8_e4m3fn.safetensors
+models/diffusion_models/qwen_image_edit_fp8_e4m3fn.safetensors: https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_edit_fp8_e4m3fn.safetensors
+models/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors: https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors
+models/vae/qwen_image_vae.safetensors: https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors
+models/loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors: https://huggingface.co/lightx2v/Qwen-Image-2512-Lightning/resolve/main/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors
+models/loras/Qwen-Image-Lightning-4steps-V1.0.safetensors: https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Lightning-4steps-V1.0.safetensors
+models/loras/Qwen-Image-Lightning-8steps-V1.0.safetensors: https://huggingface.co/lightx2v/Qwen-Image-Lightning/resolve/main/Qwen-Image-Lightning-8steps-V1.0.safetensors
