@@ -2,7 +2,7 @@
 set -euo pipefail
 
 upstream="${CNB_XU_UPSTREAM_REGISTRY:-docker.cnb.cool/cnb-xu/docker}"
-target="${CNB_XU_MIRROR_REGISTRY:-${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/cnb-xu-mirror}"
+target_prefix="${CNB_XU_MIRROR_PREFIX:-${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/cnb-xu-mirror}"
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "docker command not found; run this from a CNB environment with docker service enabled" >&2
@@ -12,8 +12,9 @@ fi
 mirror_image() {
   local image="$1"
   local tag="$2"
+  local flat_image="${image//\//-}"
   local src="${upstream}/${image}:${tag}"
-  local dst="${target}/${image}:${tag}"
+  local dst="${target_prefix}-${flat_image}:${tag}"
 
   echo "[mirror] ${src} -> ${dst}"
   docker pull "${src}"
@@ -48,4 +49,4 @@ mirror_image "comfyui-dev" "comfy-libs"
 mirror_image "module" "ai-toolkit"
 mirror_image "module" "ollama"
 
-echo "[mirror] done: ${target}"
+echo "[mirror] done: ${target_prefix}-*"
