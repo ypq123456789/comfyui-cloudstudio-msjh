@@ -2,52 +2,481 @@
 # 注意：
 # 1. 开源项目，欢迎大家fork、copy，但copy希望注明出处且继续保持开源~
 # 2. 如果遇到问题或想定制环境，进讨论群了解更多~
+# 3. 该项目配置文件比较复杂，仅带 # 注释的参数可以自己修改。修改其他参数可能无法启动环境！！！
 
-# [DISABLED] 远程 include 已禁用，防止从作者仓库拉取新配置覆盖本地设置
-# include:
-#   - https://cnb.cool/cnb-xu/docs/-/blob/main/comfyui/cnb.yml
+.env_core: &env_core
+  tags: cnb:arch:amd64:gpu:L40 # 固定使用 CNB 官方 L40 GPU 节点，避免普通创建工作空间时 tags 为空
 
-.pipeline: &pipeline
+  # 环境关闭时自动提交文件夹到仓库，多个文件夹用空格隔开，带空格的文件夹需要加""
+  # 注意隐私，提交到仓库的文件 其他人可见！其他人可见！其他人可见！
+  auto_upload_folder: user # 例如: input output user
+
+  # 手工停止构建或环境因超时回收时保存文件夹到镜像（启用：true ; 禁用：false）
+  auto_save_ai_toolkit: false # 自动保存 ai-toolkit 文件夹到镜像
+  auto_save_comfyui: false # 自动保存 comfyui 文件夹到镜像
+  auto_save_models: false # 自动保存 models 文件夹到镜像
+  auto_save_venv: false # 自动保存 venv 文件夹到镜像
+
+  # 环境启动阶段，当云节点显存占用率超过该阈值（%），自动 kill 1 关闭当前环境~
+  max_vram_usage: 100
+
+  # ComfyUI相关设置
+  attention_mode: xformers # 注意力机制，flash_attn ; pytorch ; sageattention ; xformers
+  auto_update_comfyui: false # 自动更新ComfyUI
+  write_metadata: true # 将工作流写入图片
+
+  # coscmd相关设置（cos密钥建议保存在cnb密钥仓库中，密钥中需要包含变量：SECRET_ID SECRET_KEY BUCKET REGION）
+  cos_imports: # 用于 coscmd config 的密钥文件路径，此处默认为空，为空时跳过coscmd相关操作
+
+  # 默认coscmd操作（暂不支持自定义）：
+  # coscmd config -a ${SECRET_ID} -s ${SECRET_KEY} -b ${BUCKET} -r ${REGION} -p 500 -m 30
+  # coscmd download -rf /models/ /workspace/models
+
+  # 以下参数不建议修改！！！
+  cnb_xu_path: /workspace/.cnb-xu
+  cnb_xu_docker_path: docker.cnb.cool/cnb-xu/docker
+  custom_image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-${ENV_MODE}
+  custom_image_module: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-module
+  custom_image_preset: $cnb_xu_docker_path/comfyui-${ENV_MODE}
+  custom_torch_version: 2.9.1-cu130-cp312
+  preset_torch_version1: 2.9.1-cu130-cp312
+  preset_torch_version2: 2.11.0-cu130-cp312
+  CNB_WELCOME_CMD: init2 && qd
+
+.check_vram_usage: &check_vram_usage
+  name: check vram usage
+  if: |
+    [ "$tags" != "cnb:arch:amd64" ]
+  jobs:
+    - name: current vram usage (%)
+      script: echo "$(($(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits) * 100 / $(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits)))"
+      exports:
+        stdout: vram_usage
+    - name: vram is enough
+      if: |
+        [ $vram_usage -lt $max_vram_usage ]
+      script: echo "true"
+      exports:
+        stdout: vram_is_enough
+    - name: stop env
+      if: |
+        [ "$vram_is_enough" != "true" ]
+      script: kill 1
+
+.check_custom_variables: &check_custom_variables
+  name: check custom variables
+  jobs:
+    job1:
+      name: check custom_image
+      script: |
+        if [ "$custom_image" = "docker.cnb.cool/cnb-xu/comfyui/diy" ]; then
+          echo "$cnb_xu_docker_path/comfyui-diy"
+        elif [ "$custom_image" = "docker.cnb.cool/cnb-xu/comfyui/dev" ]; then
+          echo "$cnb_xu_docker_path/comfyui-dev"
+        else
+          echo $custom_image
+        fi
+      exports:
+        stdout: custom_image
+      allowFailure: true
+    job2:
+      name: set sageattention_image
+      script: |
+        if [ "$tags" = "cnb:arch:amd64:gpu:H20" ]; then
+          echo "$cnb_xu_docker_path/site-packages:sageattention-cu130-cp312-for-h20"
+        else
+          echo "$cnb_xu_docker_path/site-packages:sageattention-cu130-cp312-for-l40"
+        fi
+      exports:
+        stdout: sageattention_image
+      allowFailure: true
+    job3:
+      name: load cnb-xu_core
+      image: $cnb_xu_docker_path/cnb-xu:latest
+      script: |
+        mkdir -p $cnb_xu_path
+        cp -af /cnb-xu/. $cnb_xu_path/
+      allowFailure: true
+    job4:
+      name: load cnb-xu_python3.12
+      image: $cnb_xu_docker_path/cnb-xu:python3.12
+      script: |
+        mkdir -p $cnb_xu_path/python3.12
+        cp -af /python3.12/. $cnb_xu_path/python3.12/
+      allowFailure: true
+    job5:
+      name: load cnb-xu_coscmd
+      image: $cnb_xu_docker_path/site-packages:coscmd
+      script: |
+        mkdir -p $cnb_xu_path/python3.12-libs/coscmd
+        cp -af /coscmd/. $cnb_xu_path/python3.12-libs/coscmd/
+      allowFailure: true
+
+.check_custom_image: &check_custom_image
+  name: check custom image
+  jobs:
+    job1:
+      name: check custom comfyui image
+      image: $custom_image:comfyui
+      script: echo "true"
+      exports:
+        stdout: custom_comfyui_image_found
+      allowFailure: true
+    job2:
+      name: check custom models image
+      image: $custom_image:models
+      script: echo "true"
+      exports:
+        stdout: custom_models_image_found
+      allowFailure: true
+    job3:
+      name: check custom venv image
+      image: $custom_image:venv
+      script: echo "true"
+      exports:
+        stdout: custom_venv_image_found
+      allowFailure: true
+    job4:
+      name: check custom ai-toolkit image
+      image: $custom_image_module:ai-toolkit
+      script: echo "true"
+      exports:
+        stdout: custom_ai_toolkit_image_found
+      allowFailure: true
+    job5:
+      name: link coscmd
+      script: ln -sf $cnb_xu_path/python3.12-libs/coscmd/bin/coscmd /usr/local/bin/coscmd
+      allowFailure: true
+
+.load_images: &load_images
+  name: load images
+  jobs:
+    load_comfyui_for_classic_env:
+      name: load comfyui
+      image: $custom_image_preset:comfyui
+      if: |
+        [ "$custom_comfyui_image_found" = "true" ] && [ "$ENV_MODE" = "classic" ]
+      script: |
+        mkdir -p /workspace/comfyui
+        rm -rf /comfyui/custom_nodes
+        cp -af /comfyui/. /workspace/comfyui/
+      allowFailure: true
+    load_custom_image 1:
+      name: load comfyui
+      image: $custom_image:comfyui
+      if: |
+        [ "$custom_comfyui_image_found" = "true" ]
+      script: |
+        mkdir -p /workspace/comfyui
+        if [ "$ENV_MODE" = "classic" ]; then
+          cp -af /comfyui/custom_nodes /workspace/comfyui/
+        else
+          cp -af /comfyui/. /workspace/comfyui/
+        fi
+      allowFailure: true
+    load_custom_image 2:
+      name: load custom_nodes
+      image: $custom_image:custom_nodes
+      if: |
+        [ "$custom_comfyui_image_found" = "true" ]
+      script: |
+        mkdir -p /workspace/comfyui
+        cp -af /custom_nodes /workspace/comfyui/
+      allowFailure: true
+    load_custom_image 3:
+      name: load libs
+      image: $custom_image:libs
+      if: |
+        [ "$custom_comfyui_image_found" = "true" ]
+      script: |
+        mkdir -p /workspace/venv/lib/python3.12/site-packages
+        cp -af /libs/. /workspace/venv/lib/python3.12/site-packages/
+      allowFailure: true
+    load_custom_image 4:
+      name: load comfy-libs
+      image: $custom_image:comfy-libs
+      if: |
+        [ "$custom_comfyui_image_found" = "true" ]
+      script: |
+        mkdir -p /workspace/venv/lib/python3.12/site-packages
+        cp -af /comfy-libs/. /workspace/venv/lib/python3.12/site-packages/
+      allowFailure: true
+    load_custom_image 5:
+      name: load venv
+      image: $custom_image:venv
+      if: |
+        [ "$custom_venv_image_found" = "true" ]
+      script: |
+        mkdir -p /workspace/venv
+        cp -af /venv/. /workspace/venv/
+      allowFailure: true
+    load_custom_image 6:
+      name: load models
+      image: $custom_image:models
+      if: |
+        [ "$custom_models_image_found" = "true" ]
+      script: cp -af /models /workspace/
+      allowFailure: true
+    load_preset_image 1:
+      name: load comfyui
+      image: $custom_image_preset:comfyui
+      if: |
+        [ "$custom_comfyui_image_found" != "true" ]
+      script: |
+        mkdir -p /workspace/comfyui
+        cp -af /comfyui/. /workspace/comfyui/
+      allowFailure: true
+    load_preset_image 2:
+      name: load custom_nodes
+      image: $custom_image_preset:custom_nodes
+      if: |
+        [ "$custom_comfyui_image_found" != "true" ]
+      script: |
+        mkdir -p /workspace/comfyui
+        cp -af /custom_nodes /workspace/comfyui/
+      allowFailure: true
+    load_preset_image 3:
+      name: load libs
+      image: $custom_image_preset:libs
+      if: |
+        [ "$custom_comfyui_image_found" != "true" ]
+      script: |
+        mkdir -p /workspace/venv/lib/python3.12/site-packages
+        cp -af /libs/. /workspace/venv/lib/python3.12/site-packages/
+      allowFailure: true
+    load_preset_image 4:
+      name: load comfy-libs
+      image: $custom_image_preset:comfy-libs
+      if: |
+        [ "$custom_comfyui_image_found" != "true" ]
+      script: |
+        mkdir -p /workspace/venv/lib/python3.12/site-packages
+        cp -af /comfy-libs/. /workspace/venv/lib/python3.12/site-packages/
+      allowFailure: true
+    load_preset_image 5:
+      name: load venv
+      image: $custom_image_preset:venv
+      if: |
+        [ "$custom_venv_image_found" != "true" ]
+      script: |
+        mkdir -p /workspace/venv
+        cp -af /venv/. /workspace/venv/
+      allowFailure: true
+    load_preset_nodes:
+      name: load preset nodes
+      image: $cnb_xu_docker_path/comfyui-dev:custom_nodes
+      if: |
+        [ "$ENV_MODE" = "classic" ]
+      script: |
+        mkdir -p /workspace/custom_nodes_preset
+        cp -af /custom_nodes/. /workspace/custom_nodes_preset/
+      allowFailure: true
+    load_preset_libs 1:
+      name: load preset libs
+      image: $cnb_xu_docker_path/comfyui-dev:libs
+      if: |
+        [ "$ENV_MODE" = "classic" ]
+      script: |
+        mkdir -p /workspace/venv_preset_libs
+        cp -af /libs/. /workspace/venv_preset_libs/
+      allowFailure: true
+    load_preset_libs 2:
+      name: load preset libs
+      image: $cnb_xu_docker_path/comfyui-dev:comfy-libs
+      if: |
+        [ "$ENV_MODE" = "classic" ]
+      script: |
+        mkdir -p /workspace/venv_preset_libs
+        cp -af /comfy-libs/. /workspace/venv_preset_libs/
+      allowFailure: true
+    load_cnb-xu_cuda-12.8:
+      name: load cnb-xu cuda-12.8
+      if: |
+         [ ! -d "/usr/local/cuda-12.8" ]
+      image: $cnb_xu_docker_path/cuda:12.8.1-libs
+      script: |
+        mkdir -p $cnb_xu_path/local
+        cp -af /cuda-12.8 $cnb_xu_path/local/
+      allowFailure: true
+    load_cnb-xu_local:
+      name: load cnb-xu local
+      image: $cnb_xu_docker_path/cnb-xu:local
+      script: |
+        mkdir -p $cnb_xu_path/local
+        cp -af /local/. $cnb_xu_path/local/
+      allowFailure: true
+    load_cnb-xu_sageattention:
+      name: load cnb-xu sageattention
+      image: $sageattention_image
+      script: |
+        mkdir -p $cnb_xu_path/python3.12-libs/sageattention
+        cp -af /sageattention/. $cnb_xu_path/python3.12-libs/sageattention/
+      allowFailure: true
+    load_cnb-xu_torch 1:
+      name: load cnb-xu torch
+      image: $cnb_xu_docker_path/site-packages:torch-$preset_torch_version1
+      script: |
+        mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1
+        cp -af /site-packages/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1/
+      allowFailure: true
+    load_cnb-xu_nunchaku 1:
+      name: load cnb-xu nunchaku
+      image: $cnb_xu_docker_path/site-packages:nunchaku-for-torch-$preset_torch_version1
+      script: |
+        mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1
+        cp -af /nunchaku/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1/
+      allowFailure: true
+    load_cnb-xu_torch 2:
+      name: load cnb-xu torch
+      image: $cnb_xu_docker_path/site-packages:torch-$preset_torch_version2
+      script: |
+        mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2
+        cp -af /site-packages/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2/
+      allowFailure: true
+    load_cnb-xu_nunchaku 2:
+      name: load cnb-xu nunchaku
+      image: $cnb_xu_docker_path/site-packages:nunchaku-for-torch-$preset_torch_version2
+      script: |
+        mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2
+        cp -af /nunchaku/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2/
+      allowFailure: true
+    load_preset_module_image 1:
+      name: load cnb-xu ai-toolkit
+      image: $cnb_xu_docker_path/module:ai-toolkit
+      if: |
+        [ "$custom_ai_toolkit_image_found" != "true" ]
+      script: cp -af /ai-toolkit /workspace/
+      allowFailure: true
+    load_custom_module_image 1:
+      name: load custom ai-toolkit
+      image: $custom_image_module:ai-toolkit
+      if: |
+        [ "$custom_ai_toolkit_image_found" = "true" ]
+      script: cp -af /ai-toolkit /workspace/
+      allowFailure: true
+    load_preset_module_image 2:
+      name: load cnb-xu ollama
+      image: $cnb_xu_docker_path/module:ollama
+      script: |
+        mkdir -p $cnb_xu_path/local
+        cp -af /ollama $cnb_xu_path/local/
+      allowFailure: true
+    update_cnb-welcome:
+      name: update cnb-welcome
+      script: code-server --install-extension cnbcool.cnb-welcome --force
+      allowFailure: true
+    coscmd:
+      name: coscmd
+      imports: $cos_imports
+      if: |
+        [ "$cos_imports" != "" ]
+      script: |
+        coscmd config -a ${SECRET_ID} -s ${SECRET_KEY} -b ${BUCKET} -r ${REGION} -p 500 -m 30
+        coscmd download -rf /models/ /workspace/models
+      allowFailure: true
+
+.init: &init
+  name: init
+  jobs:
+    - name: initialize env
+      if: |
+        [ "$tags" = "cnb:arch:amd64" -o "$vram_is_enough" = "true" ]
+      script: $cnb_xu_path/script/init
+      allowFailure: true
+    - name: vscode go
+      type: vscode:go
+
+.save: &save
+  name: save
   env:
-    # 启动时执行的命令：先运行初始化脚本（包括自定义初始化命令），再启动ComfyUI
-    # cnb-welcome 插件会读取这个标准环境变量；不要放在自定义 clouddev.env 层级下。
-    CNB_WELCOME_CMD: init2 && qd
-    # 环境关闭时自动提交文件夹到仓库，多个文件夹用空格隔开，带空格的文件夹需要加"" 
-    # 注意隐私，提交到仓库的文件 其他人可见！其他人可见！其他人可见！
-    auto_upload_folder: user # 例如: input output user
-    
-    # 手工停止构建或环境因超时回收时保存文件夹到镜像（启用：true ; 禁用：false）
-    auto_save_ai_toolkit: false # 自动保存 ai-toolkit 文件夹到镜像
-    auto_save_comfyui: false # 自动保存 comfyui 文件夹到镜像
-    auto_save_models: false # 自动保存 models 文件夹到镜像
-    auto_save_venv: false # 自动保存 venv 文件夹到镜像
+    base_image: cnbcool/default-dev-env:latest
+    save_script: $cnb_xu_path/script/save
+    save_custom: /workspace/自定义保存命令
+    upload_script: $cnb_xu_path/script/git/upload
+  jobs:
+    job1:
+      name: upload folder
+      image: $base_image
+      if: |
+        [ "$auto_upload_folder" != "" ]
+      script: $upload_script $auto_upload_folder
+      allowFailure: true
+    job2:
+      name: save custom
+      image: $base_image
+      if: |
+        [ -f $save_custom ]
+      script: |
+        chmod +x $save_custom
+        $save_custom
+      allowFailure: true
+    job3:
+      name: save comfyui
+      image: $base_image
+      if: |
+        [ "$auto_save_comfyui" = "true" ]
+      script: $save_script comfyui
+      allowFailure: true
+    job4:
+      name: save models
+      image: $base_image
+      if: |
+        [ "$auto_save_models" = "true" ]
+      script: $save_script models
+      allowFailure: true
+    job5:
+      name: save venv
+      image: $base_image
+      if: |
+        [ "$auto_save_venv" = "true" ]
+      script: $save_script venv
+      allowFailure: true
+    job6:
+      name: save ai-toolkit
+      image: $base_image
+      if: |
+        [ "$auto_save_ai_toolkit" = "true" ]
+      script: $save_script ai-toolkit
+      allowFailure: true
 
-    # 环境启动阶段，当云节点显存占用率超过该阈值（%），自动 kill 1 关闭当前环境~
-    max_vram_usage: 100
-
-    # ComfyUI相关设置
-    attention_mode: xformers # 注意力机制，flash_attn ; pytorch ; sageattention ; xformers
-    auto_update_comfyui: false # 自动更新ComfyUI
-    write_metadata: true # 将工作流写入图片
+.pipeline_core: &pipeline_core
+  docker:
+    image: $cnb_xu_docker_path/cuda:13.0.2-zh-hans-vscode
+    volumes:
+      - /workspace/models_cnb_cache
+  runner:
+      tags: $tags
+      cpus: 16
   services:
     - vscode
     - docker
+  stages:
+    - <<: *check_vram_usage
+    - <<: *check_custom_variables
+    - <<: *check_custom_image
+    - <<: *load_images
+    - <<: *init
+  endStages:
+    - <<: *save
+
+.pipeline_classic: &pipeline_classic
+  clouddev:
+    env:
+      ENV_MODE: classic
+      <<: *env_core
+    <<: *pipeline_core
+
+.pipeline_diy: &pipeline_diy
+  clouddev:
+    env:
+      ENV_MODE: diy
+      <<: *env_core
+    <<: *pipeline_core
 
 $:
   vscode:
-    - <<: *pipeline
-      runner:
-        # 普通“创建工作空间”不会提供 web_trigger 的 tags 输入。
-        # 固定使用 CNB 官方 L40 GPU 节点，避免空变量被解析成 cnb:arch:default,, / cpus:-1。
-        tags: cnb:arch:amd64:gpu:L40
-        cpus: 16
+    <<: *pipeline_classic
   web_trigger_classic:
-    - <<: *pipeline
-      runner:
-        tags: ${tags}
-        cpus: 16
+    <<: *pipeline_classic
   web_trigger_diy:
-    - <<: *pipeline
-      runner:
-        tags: ${tags}
-        cpus: 16
+    <<: *pipeline_diy
