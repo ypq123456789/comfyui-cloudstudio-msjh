@@ -131,12 +131,28 @@ if [ -f /workspace/venv/bin/activate ]; then
     PIP_BIN="/workspace/venv/bin/pip"
 fi
 
-if ! "$PYTHON_BIN" - <<'PY' >/dev/null 2>&1
-import sqlalchemy
+MISSING_PY_DEPS="$("$PYTHON_BIN" - <<'PY'
+missing = []
+checks = [
+    ("sqlalchemy", "SQLAlchemy>=2.0.0"),
+    ("alembic", "alembic"),
+    ("pydantic", "pydantic~=2.0"),
+    ("pydantic_settings", "pydantic-settings~=2.0"),
+    ("aiohttp", "aiohttp>=3.11.8"),
+    ("yarl", "yarl>=1.18.0"),
+]
+for module, package in checks:
+    try:
+        __import__(module)
+    except Exception:
+        missing.append(package)
+print(" ".join(missing))
 PY
-then
-    echo "[Dependency Fallback] 缺少 sqlalchemy，正在补装..."
-    "$PIP_BIN" install -U SQLAlchemy
+)"
+
+if [ -n "$MISSING_PY_DEPS" ]; then
+    echo "[Dependency Fallback] 缺少 Python 依赖，正在补装: $MISSING_PY_DEPS"
+    "$PIP_BIN" install -U $MISSING_PY_DEPS
 fi
 
 # ============================================================
