@@ -8,27 +8,30 @@
 #   - https://cnb.cool/cnb-xu/docs/-/blob/main/comfyui/cnb.yml
 
 .pipeline: &pipeline
-  clouddev:
-    env:
-      # 启动时执行的命令：先运行初始化脚本（包括自定义初始化命令），再启动ComfyUI
-      CNB_WELCOME_CMD: init2 && qd
-      # 环境关闭时自动提交文件夹到仓库，多个文件夹用空格隔开，带空格的文件夹需要加""
-      # 注意隐私，提交到仓库的文件 其他人可见！其他人可见！其他人可见！
-      auto_upload_folder: user # 例如: input output user
-      
-      # 手工停止构建或环境因超时回收时保存文件夹到镜像（启用：true ; 禁用：false）
-      auto_save_ai_toolkit: false # 自动保存 ai-toolkit 文件夹到镜像
-      auto_save_comfyui: false # 自动保存 comfyui 文件夹到镜像
-      auto_save_models: false # 自动保存 models 文件夹到镜像
-      auto_save_venv: false # 自动保存 venv 文件夹到镜像
+  env:
+    # 启动时执行的命令：先运行初始化脚本（包括自定义初始化命令），再启动ComfyUI
+    # cnb-welcome 插件会读取这个标准环境变量；不要放在自定义 clouddev.env 层级下。
+    CNB_WELCOME_CMD: init2 && qd
+    # 环境关闭时自动提交文件夹到仓库，多个文件夹用空格隔开，带空格的文件夹需要加"" 
+    # 注意隐私，提交到仓库的文件 其他人可见！其他人可见！其他人可见！
+    auto_upload_folder: user # 例如: input output user
+    
+    # 手工停止构建或环境因超时回收时保存文件夹到镜像（启用：true ; 禁用：false）
+    auto_save_ai_toolkit: false # 自动保存 ai-toolkit 文件夹到镜像
+    auto_save_comfyui: false # 自动保存 comfyui 文件夹到镜像
+    auto_save_models: false # 自动保存 models 文件夹到镜像
+    auto_save_venv: false # 自动保存 venv 文件夹到镜像
 
-      # 环境启动阶段，当云节点显存占用率超过该阈值（%），自动 kill 1 关闭当前环境~
-      max_vram_usage: 100
+    # 环境启动阶段，当云节点显存占用率超过该阈值（%），自动 kill 1 关闭当前环境~
+    max_vram_usage: 100
 
-      # ComfyUI相关设置
-      attention_mode: xformers # 注意力机制，flash_attn ; pytorch ; sageattention ; xformers
-      auto_update_comfyui: false # 自动更新ComfyUI
-      write_metadata: true # 将工作流写入图片
+    # ComfyUI相关设置
+    attention_mode: xformers # 注意力机制，flash_attn ; pytorch ; sageattention ; xformers
+    auto_update_comfyui: false # 自动更新ComfyUI
+    write_metadata: true # 将工作流写入图片
+  services:
+    - vscode
+    - docker
 
 $:
   vscode:
