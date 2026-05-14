@@ -119,6 +119,27 @@ EOF
 fi
 
 # ============================================================
+# Python 依赖兜底 - fork 后预置镜像可能缺少新版 ComfyUI 资产库依赖
+# ============================================================
+
+PYTHON_BIN="${PYTHON_BIN:-python}"
+PIP_BIN="${PIP_BIN:-pip}"
+if [ -f /workspace/venv/bin/activate ]; then
+    # shellcheck disable=SC1091
+    source /workspace/venv/bin/activate
+    PYTHON_BIN="/workspace/venv/bin/python"
+    PIP_BIN="/workspace/venv/bin/pip"
+fi
+
+if ! "$PYTHON_BIN" - <<'PY' >/dev/null 2>&1
+import sqlalchemy
+PY
+then
+    echo "[Dependency Fallback] 缺少 sqlalchemy，正在补装..."
+    "$PIP_BIN" install -U SQLAlchemy
+fi
+
+# ============================================================
 # 原有初始化命令
 # ============================================================
 
