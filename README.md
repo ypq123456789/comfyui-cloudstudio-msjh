@@ -13,7 +13,9 @@
 
 首创**多镜像协作**方案，将ComfyUI运行环境拆分为多个子镜像，实现了用户自定义内容与预置镜像的自动组合。
 
-Fork仓库后点击右上角 **启动 L40 预装环境** 稍等一会即可开始玩耍~ 点击 **启动 H20 预装环境** 探索更多玩法~
+Fork仓库后点击右上角 **启动 L40 预装环境** 稍等一会即可开始玩耍。
+
+本仓库已把 CNB 欢迎命令改成真实启动链路：`bash /workspace/自定义初始化命令`。启动脚本会先做必要补丁和后台上报，再直接执行 `qd --listen 0.0.0.0 --port 8188 --enable-cors-header "*"` 启动 ComfyUI；不再依赖环境里可能不存在的 `init2` 命令。
 
 了解更多：
 [![](https://img.shields.io/badge/ComfyUI交流群-5C5C5C?logo=wechat)](https://cnb.cool/cnb-xu/docs/-/git/raw/main/comfyui/image/qrcode.png)

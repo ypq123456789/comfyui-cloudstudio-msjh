@@ -43,7 +43,7 @@
   custom_torch_version: 2.9.1-cu130-cp312
   preset_torch_version1: 2.9.1-cu130-cp312
   preset_torch_version2: 2.11.0-cu130-cp312
-  CNB_WELCOME_CMD: bash /workspace/自定义初始化命令 && init2 && qd
+  CNB_WELCOME_CMD: bash /workspace/自定义初始化命令
 
 .check_vram_usage: &check_vram_usage
   name: check vram usage

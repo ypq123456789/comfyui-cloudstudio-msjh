@@ -127,3 +127,10 @@ nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
 
 # 安装Tencent Cloud CodeBuddy扩展
 code-server --install-extension Tencent-Cloud.coding-copilot
+
+# ============================================================
+# 真实启动命令
+# ============================================================
+
+echo "[Startup] 正在启动 ComfyUI: qd --listen 0.0.0.0 --port 8188 --enable-cors-header \"*\""
+exec qd --listen 0.0.0.0 --port 8188 --enable-cors-header "*"
