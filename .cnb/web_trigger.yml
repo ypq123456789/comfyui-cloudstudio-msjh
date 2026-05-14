@@ -28,3 +28,6 @@ branch:
       - name: 构建 NSFW 补丁核心镜像
         event: web_trigger_freeze_cnb_xu_images
         openWorkspace: false
+      - name: 清理无用大镜像
+        event: web_trigger_delete_unused_cnb_mirror_images
+        openWorkspace: false

@@ -487,6 +487,16 @@
         - name: build patched core image
           script: bash scripts/build-patched-cnb-xu-core.sh
 
+.pipeline_delete_unused_cnb_mirror_images: &pipeline_delete_unused_cnb_mirror_images
+  runner:
+      tags: cnb:arch:amd64
+      cpus: 8
+  stages:
+    - name: delete unused cnb-xu mirror images
+      jobs:
+        - name: delete unused mirror images
+          script: bash scripts/delete-unused-cnb-mirror-images.sh
+
 $:
   vscode:
     <<: *pipeline_classic
@@ -496,7 +506,11 @@ $:
     <<: *pipeline_diy
   web_trigger_freeze_cnb_xu_images:
     <<: *pipeline_freeze_cnb_xu_images
+  web_trigger_delete_unused_cnb_mirror_images:
+    <<: *pipeline_delete_unused_cnb_mirror_images
 
 main:
   web_trigger_freeze_cnb_xu_images:
     - <<: *pipeline_freeze_cnb_xu_images
+  web_trigger_delete_unused_cnb_mirror_images:
+    - <<: *pipeline_delete_unused_cnb_mirror_images
