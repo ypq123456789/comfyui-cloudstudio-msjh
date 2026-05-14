@@ -32,8 +32,14 @@
 
 $:
   vscode:
-    <<: *pipeline
+    - <<: *pipeline
+      runner:
+        tags: ${tags}
   web_trigger_classic:
-    <<: *pipeline
+    - <<: *pipeline
+      runner:
+        tags: ${tags}
   web_trigger_diy:
-    <<: *pipeline
+    - <<: *pipeline
+      runner:
+        tags: ${tags}

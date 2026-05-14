@@ -1,16 +1,3 @@
-.custom_image: &custom_image
-  name: 自定义镜像来源
-  required: true
-  type: select
-  default: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-${ENV_MODE}
-  options:
-    - name: 当前仓库分支里的自定义镜像
-      value: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-${ENV_MODE}
-    - name: cnb-xu提供，基础镜像，适合全新DIY
-      value: $cnb_xu_docker_path/comfyui-diy
-    - name: cnb-xu提供，开发镜像，预装大量插件
-      value: $cnb_xu_docker_path/comfyui-dev
-
 .tags: &tags
   name: 节点类型
   description: H20、L40节点消耗 云原生开发-GPU 额度，CPU节点消耗 云原生开发-CPU 额度
@@ -40,5 +27,3 @@ branch:
         inputs:
           tags:
             <<: *tags
-          custom_image:
-            <<: *custom_image
