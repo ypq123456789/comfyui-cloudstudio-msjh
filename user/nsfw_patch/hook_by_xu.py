@@ -195,3 +195,105 @@ def load_nodes_json():
         except Exception:
             pass
     return {}
+
+
+# === 自定义下载链接 ===
+_custom_source_path = "/workspace/自定义下载链接.yaml"
+
+def load_custom_source():
+    """加载自定义下载链接.yaml，将用户定义的模型下载链接合并到 all_file_dict"""
+    if not os.path.exists(_custom_source_path):
+        return
+    try:
+        import yaml
+        with open(_custom_source_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        if not data:
+            return
+        # 格式: "模型路径: 下载链接"，一行一条
+        # 也可能是 dict 格式
+        if isinstance(data, dict):
+            for model_path, url in data.items():
+                if not isinstance(url, str) or not url.startswith("http"):
+                    continue
+                # 解析模型路径，确定 folder_name 和 filename
+                model_path = model_path.strip().strip('"')
+                # 规范化路径
+                path_parts = _normalize_model_path(model_path)
+                if path_parts:
+                    folder_name, filename = path_parts
+                    if folder_name not in _all_file_dict:
+                        _all_file_dict[folder_name] = {}
+                    _all_file_dict[folder_name][filename] = url
+                    logger.info(f"[自定义下载链接] {folder_name}/{filename} -> {url}")
+    except ImportError:
+        logger.warning("PyYAML not installed, cannot load 自定义下载链接.yaml")
+    except Exception as e:
+        logger.warning(f"Failed to load 自定义下载链接.yaml: {e}")
+
+
+def _normalize_model_path(model_path):
+    """将模型路径规范化为 (folder_name, filename)"""
+    # 去掉常见前缀
+    prefixes = [
+        "/workspace/models/",
+        "/workspace/comfyui/models/",
+        "models/",
+    ]
+    normalized = model_path
+    for prefix in prefixes:
+        if normalized.startswith(prefix):
+            normalized = normalized[len(prefix):]
+            break
+
+    # 分割为 folder_name 和 filename
+    parts = normalized.split("/")
+    if len(parts) >= 2:
+        folder_name = "/".join(parts[:-1])
+        filename = parts[-1]
+        return (folder_name, filename)
+    elif len(parts) == 1:
+        return ("", parts[0])
+    return None
+
+
+# 模块加载时自动加载自定义下载链接
+load_custom_source()
+
+
+# === 预设源加载 ===
+_preset_source_file = None
+
+def load_preset_source():
+    """加载预设源数据（stub: 从 source.json 重新加载）"""
+    refresh_source()
+    load_custom_source()
+
+
+# === 其他缺失的接口 ===
+
+def find_model(folder_name, filename):
+    """查找模型文件（不自动下载）"""
+    return find_or_download_model(folder_name, filename, auto_download=False)
+
+
+def collect_file(folder_name, filename, auto_download=True):
+    """收集文件（与 find_or_download_model 类似）"""
+    return find_or_download_model(folder_name, filename, auto_download=auto_download)
+
+
+def calculate_folder_size(folder_path):
+    """计算文件夹大小（字节）"""
+    total_size = 0
+    if os.path.isdir(folder_path):
+        for dirpath, dirnames, filenames in os.walk(folder_path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                if os.path.exists(fp):
+                    total_size += os.path.getsize(fp)
+    return total_size
+
+
+def order_all_file_dict():
+    """排序文件字典（stub: 无操作）"""
+    pass
