@@ -35,6 +35,7 @@
   # 以下参数不建议修改！！！
   cnb_xu_path: /workspace/.cnb-xu
   cnb_xu_docker_path: docker.cnb.cool/cnb-xu/docker
+  cnb_xu_core_image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/cnb-xu-core:latest
   cnb_xu_mirror_prefix: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/cnb-xu-mirror
   custom_image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-${ENV_MODE}
   custom_image_module: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-module
@@ -93,7 +94,7 @@
       allowFailure: true
     job3:
       name: load cnb-xu_core
-      image: $cnb_xu_docker_path/cnb-xu:latest
+      image: $cnb_xu_core_image
       script: |
         mkdir -p $cnb_xu_path
         cp -af /cnb-xu/. $cnb_xu_path/
@@ -481,10 +482,10 @@
   services:
     - docker
   stages:
-    - name: freeze cnb-xu upstream images
+    - name: build patched cnb-xu core image
       jobs:
-        - name: mirror images into this repo registry
-          script: bash scripts/mirror-cnb-xu-images.sh
+        - name: build patched core image
+          script: bash scripts/build-patched-cnb-xu-core.sh
 
 $:
   vscode:
