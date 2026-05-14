@@ -169,5 +169,6 @@ code-server --install-extension Tencent-Cloud.coding-copilot
 # 真实启动命令
 # ============================================================
 
-echo "[Startup] 正在启动 ComfyUI: qd --listen 0.0.0.0 --port 8188 --enable-cors-header \"*\""
-exec qd --listen 0.0.0.0 --port 8188 --enable-cors-header "*"
+echo "[Startup] 正在启动 ComfyUI: $PYTHON_BIN /workspace/comfyui/main.py --listen 0.0.0.0 --port 8188 --enable-cors-header \"*\""
+cd /workspace/comfyui
+exec "$PYTHON_BIN" main.py --listen 0.0.0.0 --port 8188 --enable-cors-header "*"
