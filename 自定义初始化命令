@@ -97,6 +97,28 @@ fi
 echo "[启动优化] 远程拉取已全部禁用，启动速度将更快"
 
 # ============================================================
+# qd 命令兜底 - 防止 fork 后 CNB-Xu 内置命令未注入 PATH
+# ============================================================
+
+if ! command -v qd >/dev/null 2>&1; then
+    cat > /usr/local/bin/qd <<'EOF'
+#!/bin/bash
+set -e
+
+cd /workspace/comfyui
+
+if [ -f /workspace/venv/bin/activate ]; then
+    source /workspace/venv/bin/activate
+fi
+
+PYTHON_BIN="${PYTHON_BIN:-python}"
+exec "$PYTHON_BIN" main.py --listen 0.0.0.0 --port 8188 --enable-cors-header "*" "$@"
+EOF
+    chmod +x /usr/local/bin/qd
+    echo "[Command Fallback] 已安装 qd 兜底命令"
+fi
+
+# ============================================================
 # 原有初始化命令
 # ============================================================
 
