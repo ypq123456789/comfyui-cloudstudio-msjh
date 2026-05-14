@@ -35,6 +35,7 @@
   # 以下参数不建议修改！！！
   cnb_xu_path: /workspace/.cnb-xu
   cnb_xu_docker_path: docker.cnb.cool/cnb-xu/docker
+  cnb_xu_mirror_path: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/cnb-xu-mirror
   custom_image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-${ENV_MODE}
   custom_image_module: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-module
   custom_image_preset: $cnb_xu_docker_path/comfyui-${ENV_MODE}
@@ -473,6 +474,18 @@
       <<: *env_core
     <<: *pipeline_core
 
+.pipeline_freeze_cnb_xu_images: &pipeline_freeze_cnb_xu_images
+  runner:
+      tags: cnb:arch:amd64
+      cpus: 16
+  services:
+    - docker
+  stages:
+    - name: freeze cnb-xu upstream images
+      jobs:
+        - name: mirror images into this repo registry
+          script: bash scripts/mirror-cnb-xu-images.sh
+
 $:
   vscode:
     <<: *pipeline_classic
@@ -480,3 +493,5 @@ $:
     <<: *pipeline_classic
   web_trigger_diy:
     <<: *pipeline_diy
+  web_trigger_freeze_cnb_xu_images:
+    <<: *pipeline_freeze_cnb_xu_images

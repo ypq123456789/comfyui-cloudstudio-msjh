@@ -25,3 +25,6 @@ branch:
         inputs:
           tags:
             <<: *tags
+      - name: 冻结上游镜像到本仓库
+        event: web_trigger_freeze_cnb_xu_images
+        openWorkspace: false
