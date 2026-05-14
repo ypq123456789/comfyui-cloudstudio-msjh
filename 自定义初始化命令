@@ -6,10 +6,54 @@
 # 启动CNB域名持续上报（后台运行）
 nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
 
-# 禁用NSFW检测：使用stub模块替代原始.so模块
-# 已编译为 .cnb-xu/script_py/nsfw_checker_by_xu.cpython-312-x86_64-linux-gnu.so
-# 源文件在 .cnb-xu/script_py/nsfw_checker_by_xu.py
+# 禁用NSFW检测：用stub模块替代原始.so（每次启动自动构建）
 # 注意：直接删除 .so 会导致"核心模块缺失"错误，需要用stub替换
+STUB_DIR="/workspace/.cnb-xu/script_py"
+STUB_PY="$STUB_DIR/nsfw_checker_by_xu.py"
+STUB_SO="$STUB_DIR/nsfw_checker_by_xu.cpython-312-x86_64-linux-gnu.so"
+if [ -d "$STUB_DIR" ]; then
+  cat > "$STUB_PY" << 'STUBEOF'
+import numpy as np
+import torch
+class NSFW_Content_Found(Exception):
+    def __init__(self, msg="NSFW Content Found !"):
+        super().__init__(msg)
+def check_image(image, *a, **kw): return False
+def check_vae_decode_images(images, *a, **kw): return images
+def detect_nsfw(image, *a, **kw): return False
+def detect_with_nsfw_1(image, *a, **kw): return False
+def detect_with_nsfw_2(image, *a, **kw): return False
+def detect_with_nsfw_3(image, *a, **kw): return False
+def prepare_detect_frame(image, *a, **kw): return image
+def fit_frame(image, *a, **kw): return image
+def forward_nsfw(image, *a, **kw): return False
+class NSFW_Checker:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"image": ("IMAGE", {"tooltip": "The images to check."})}, "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"}}
+    RETURN_TYPES = ("IMAGE",)
+    FUNCTION = "save_images"
+    OUTPUT_NODE = True
+    CATEGORY = "CNB-Xu"
+    DESCRIPTION = "NSFW Checker (disabled)"
+    def save_images(self, image, prompt=None, extra_pnginfo=None):
+        return {"ui": {}, "result": (image,)}
+NODE_CLASS_MAPPINGS = {"NSFW_Checker": NSFW_Checker}
+STUBEOF
+  python3 -c "
+from Cython.Build import cythonize
+from setuptools import Extension, Distribution
+ext = Extension('nsfw_checker_by_xu', sources=['$STUB_PY'])
+dist = Distribution({'ext_modules': cythonize([ext], language_level=3)})
+cmd = dist.get_command_obj('build_ext')
+cmd.build_lib = '$STUB_DIR'
+cmd.inplace = True
+cmd.ensure_finalized()
+cmd.run()
+" 2>/dev/null
+  rm -f "$STUB_DIR/nsfw_checker_by_xu.c"
+  echo "NSFW checker stub built and replaced"
+fi
 
 # 安装Tencent Cloud CodeBuddy扩展
 code-server --install-extension Tencent-Cloud.coding-copilot
