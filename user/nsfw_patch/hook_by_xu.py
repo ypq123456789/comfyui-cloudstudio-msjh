@@ -219,7 +219,12 @@ def import_filename_list(folder_name, out):
     if not isinstance(out, tuple) or len(out) < 2:
         return out
 
-    files_set, dirs_set = out[0], out[1]
+    files_list, dirs_list = out[0], out[1]
+    # 确保 files 是可变的 set（ComfyUI 可能传入 list）
+    if isinstance(files_list, list):
+        files_set = set(files_list)
+    else:
+        files_set = set(files_list)
 
     if folder_name in _folder_index:
         models_base = "/workspace/models"
@@ -245,7 +250,7 @@ def import_filename_list(folder_name, out):
             # 文件不存在，添加到列表让用户看到（运行时可自动下载）
             files_set.add(basename)
 
-    return (files_set, dirs_set)
+    return (files_set, dirs_list)
 
 
 def _directory_to_folder_name(directory):
