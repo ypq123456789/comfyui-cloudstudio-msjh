@@ -495,3 +495,7 @@ $:
     <<: *pipeline_diy
   web_trigger_freeze_cnb_xu_images:
     <<: *pipeline_freeze_cnb_xu_images
+
+main:
+  web_trigger_freeze_cnb_xu_images:
+    - <<: *pipeline_freeze_cnb_xu_images
