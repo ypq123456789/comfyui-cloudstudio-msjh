@@ -10,6 +10,8 @@
 .pipeline: &pipeline
   clouddev:
     env:
+      # 启动时执行的命令：先运行初始化脚本（包括自定义初始化命令），再启动ComfyUI
+      CNB_WELCOME_CMD: init2 && qd
       # 环境关闭时自动提交文件夹到仓库，多个文件夹用空格隔开，带空格的文件夹需要加""
       # 注意隐私，提交到仓库的文件 其他人可见！其他人可见！其他人可见！
       auto_upload_folder: user # 例如: input output user
