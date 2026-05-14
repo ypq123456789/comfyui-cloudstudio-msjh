@@ -10,7 +10,7 @@ import subprocess
 logger = logging.getLogger(__name__)
 
 # === 全局变量 ===
-enable_auto_download = True
+enable_auto_download = False  # patch_by_xu.py 直接读写此变量控制自动下载
 
 # === 数据结构 ===
 # _all_file_dict: {repo_name: {relative_path: url}}  — 保留原始结构，供其他模块引用
@@ -36,6 +36,12 @@ _MODEL_FOLDERS = [
 ]
 
 
+def _register_repo_folder(repo_key, dir_path, repo_to_folder):
+    """将 repo 映射注册到 repo_to_folder 字典"""
+    # dir_path 形如 "models/unet" 或 "models/loras/Z-Image" 或 "models"
+    repo_to_folder[repo_key] = dir_path
+
+
 def _load_source_data():
     """从 source.json 加载模型映射数据，构建 folder 索引"""
     global _all_file_dict, _all_source_dict, _all_sha256_dict, _folder_index
@@ -49,24 +55,42 @@ def _load_source_data():
 
         # 1. 处理 path_dict（repo → 目录映射）
         path_dict = data.get("path_dict", {})
+        # 构建 repo → folder_name 的扁平映射（path_dict 可能是嵌套的）
+        repo_to_folder = {}
         for repo_key, repo_val in path_dict.items():
             if isinstance(repo_val, dict):
                 _all_source_dict[repo_key] = repo_val
+                # 嵌套 dict：值本身也是 {repo: dir} 映射
+                for sub_repo, sub_dir in repo_val.items():
+                    if isinstance(sub_dir, str):
+                        _register_repo_folder(sub_repo, sub_dir, repo_to_folder)
+            elif isinstance(repo_val, str):
+                _register_repo_folder(repo_key, repo_val, repo_to_folder)
 
-        # 2. 处理顶层 URL 列表（key 是 "folder_name/filename"，value 是 URL）
+        # 2. 处理顶层 URL 列表（key 是 repo_name，value 是 {file_path: url}）
         for key, val in data.items():
             if key == "path_dict":
                 continue
             if isinstance(val, dict):
-                # 每个 key 是 "folder/subpath/file.ext" 格式
                 repo_name = key
                 if repo_name not in _all_file_dict:
                     _all_file_dict[repo_name] = {}
+                # 获取该 repo 对应的 folder 前缀
+                folder_prefix = repo_to_folder.get(repo_name, "")
+                # 去掉 "models/" 前缀
+                if folder_prefix.startswith("models/"):
+                    folder_prefix = folder_prefix[len("models/"):]
+                elif folder_prefix == "models":
+                    folder_prefix = ""
                 for file_path, url in val.items():
                     if isinstance(url, str) and url.startswith("http"):
                         _all_file_dict[repo_name][file_path] = url
-                        # 添加到 folder_index
-                        _add_to_folder_index(file_path, url)
+                        # 如果 file_path 自身不含 folder 前缀，则使用 path_dict 中的映射
+                        if folder_prefix and "/" not in file_path and not file_path.startswith("models/"):
+                            indexed_path = f"{folder_prefix}/{file_path}"
+                        else:
+                            indexed_path = file_path
+                        _add_to_folder_index(indexed_path, url)
 
     except Exception as e:
         logger.warning(f"Failed to load source.json: {e}")
@@ -135,6 +159,11 @@ def aria2c(file_path, url, extra_args=None):
         return False
 
 
+# === 自动下载控制 ===
+# patch_by_xu.py 在提交任务时设置 hook_by_xu.enable_auto_download = True
+# 页面扫描/刷新时设为 False，防止打开页面就疯狂下载
+
+
 # === 核心接口 ===
 def find_or_download_model(folder_name, filename, auto_download=True):
     """在本地查找模型文件，如未找到且 auto_download=True 则尝试下载"""
@@ -149,7 +178,8 @@ def find_or_download_model(folder_name, filename, auto_download=True):
     if os.path.exists(cache_path):
         return cache_path
 
-    if auto_download:
+    # 必须同时满足：调用方请求 auto_download 且模块级开关 enable_auto_download 为 True
+    if auto_download and enable_auto_download:
         logger.info(f"[find_or_download_model] {folder_name}/{filename} not found locally, searching...")
         url = _find_url(folder_name, filename)
         if url:
@@ -168,9 +198,10 @@ def find_or_download_model(folder_name, filename, auto_download=True):
 
 def _find_url(folder_name, filename):
     """在 folder_index 和 all_file_dict 中查找下载 URL"""
-    # 优先在 folder_index 中查找
-    if folder_name in _folder_index and filename in _folder_index[folder_name]:
-        return _folder_index[folder_name][filename]
+    # 优先在 folder_index 中查找（支持别名）
+    for alias in _resolve_folder_aliases(folder_name):
+        if alias in _folder_index and filename in _folder_index[alias]:
+            return _folder_index[alias][filename]
 
     # 在 all_file_dict 中按 filename 搜索（跨 repo）
     for repo_name, files in _all_file_dict.items():
@@ -189,6 +220,22 @@ def _find_url(folder_name, filename):
     return None
 
 
+# ComfyUI folder_name 别名映射
+_FOLDER_ALIASES = {
+    "diffusion_models": ["unet", "diffusion_models"],
+    "unet": ["unet", "diffusion_models"],
+    "unet_gguf": ["unet", "diffusion_models", "unet_gguf"],
+    "diffusion_models_gguf": ["unet", "diffusion_models", "diffusion_models_gguf"],
+}
+
+
+def _resolve_folder_aliases(folder_name):
+    """解析 folder_name 的所有可能别名"""
+    if folder_name in _FOLDER_ALIASES:
+        return _FOLDER_ALIASES[folder_name]
+    return [folder_name]
+
+
 def import_models(directory, result):
     """将 folder_index 中的可下载模型添加到扫描结果中"""
     if not isinstance(result, tuple) or len(result) < 2:
@@ -199,12 +246,13 @@ def import_models(directory, result):
 
     # 从 directory 路径推断 folder_name
     folder_name = _directory_to_folder_name(directory)
-    if folder_name and folder_name in _folder_index:
-        for filename in _folder_index[folder_name]:
-            # 只添加本地不存在的（避免重复）
-            full_path = os.path.join(directory, filename)
-            if not os.path.exists(full_path):
-                files_set.add(filename)
+    for alias in _resolve_folder_aliases(folder_name):
+        if alias in _folder_index:
+            for filename in _folder_index[alias]:
+                # 只添加本地不存在的（避免重复）
+                full_path = os.path.join(directory, filename)
+                if not os.path.exists(full_path):
+                    files_set.add(filename)
 
     return (files_set, dirs_list)
 
@@ -226,18 +274,20 @@ def import_filename_list(folder_name, out):
     else:
         files_set = set(files_list)
 
-    if folder_name in _folder_index:
+    for alias in _resolve_folder_aliases(folder_name):
+        if alias not in _folder_index:
+            continue
         models_base = "/workspace/models"
-        for filename in _folder_index[folder_name]:
+        for filename in _folder_index[alias]:
             basename = os.path.basename(filename)
-            full_path = os.path.join(models_base, folder_name, filename)
-            cache_path = os.path.join("/workspace/models_cnb_cache", folder_name, filename)
+            full_path = os.path.join(models_base, alias, filename)
+            cache_path = os.path.join("/workspace/models_cnb_cache", alias, filename)
             # 如果文件在 models/ 中已存在，ComfyUI 已扫描到，跳过
             if os.path.exists(full_path):
                 continue
             # 如果文件在 cnb_cache 中，创建软链接到 models/ 让 ComfyUI 能扫描到
             if os.path.exists(cache_path):
-                link_dir = os.path.join(models_base, folder_name)
+                link_dir = os.path.join(models_base, alias)
                 os.makedirs(link_dir, exist_ok=True)
                 link_path = os.path.join(link_dir, basename)
                 if not os.path.exists(link_path):
