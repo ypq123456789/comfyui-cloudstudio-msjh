@@ -34,12 +34,17 @@ $:
   vscode:
     - <<: *pipeline
       runner:
-        tags: ${tags}
+        # 普通“创建工作空间”不会提供 web_trigger 的 tags 输入。
+        # 固定使用 CNB 官方 L40 GPU 节点，避免空变量被解析成 cnb:arch:default,, / cpus:-1。
+        tags: cnb:arch:amd64:gpu:L40
+        cpus: 16
   web_trigger_classic:
     - <<: *pipeline
       runner:
         tags: ${tags}
+        cpus: 16
   web_trigger_diy:
     - <<: *pipeline
       runner:
         tags: ${tags}
+        cpus: 16

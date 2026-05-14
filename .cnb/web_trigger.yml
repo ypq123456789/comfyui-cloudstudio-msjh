@@ -1,26 +1,18 @@
 .tags: &tags
   name: 节点类型
-  description: H20、L40节点消耗 云原生开发-GPU 额度，CPU节点消耗 云原生开发-CPU 额度
+  description: L40 节点消耗云原生开发-GPU额度，CPU节点消耗云原生开发-CPU额度
   required: true
   type: select
-  default: cnb:arch:amd64:gpu:H20
+  default: cnb:arch:amd64:gpu:L40
   options:
-    - name: H20 96GB显存 消耗 32核时/小时
-      value: cnb:arch:amd64:gpu:H20
     - name: L40 48GB显存 消耗 16核时/小时
       value: cnb:arch:amd64:gpu:L40
-    - name: CPU 16GB内存 消耗 8核时/小时
+    - name: CPU 节点（无 GPU，仅用于调试配置）
       value: cnb:arch:amd64
-
-# 新增 runner 全局配置，匹配可选节点标签，修复 CPU 无效值问题
-runner:
-  namespace: global
-  tags: cnb:arch:amd64:gpu:H20  # 默认使用 H20 节点，可根据需求修改为 L40 或 CPU 节点标签
-  cpus: 32  # H20 对应32核，L40填16，CPU填8，和可选描述的核时匹配
 
 branch:
   - buttons:
-      - name: 启动 H20 预装环境
+      - name: 启动 L40 预装环境
         event: web_trigger_classic
         isDefault: true
         openWorkspace: true
