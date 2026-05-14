@@ -3,76 +3,105 @@
 # 将需要在初始化阶段执行的bash命令写在这里，一个命令一行，环境启动后会自动按顺序执行
 # 例如：
 # aria2c -x 4 -s 4 -c -d "/workspace/models/checkpoints" -o "ace_step_v1_3.5b.safetensors" "https://cnb.cool/ai-models/Comfy-Org/ACE-Step_ComfyUI_repackaged/-/lfs/f07cad74c4adce52ca14ca1bdf74cf3c14cbafb0823b95eca4459467fa369f40"
+
+# ============================================================
+# NSFW 检测模块补丁 - 禁用 NSFW 检测，防止进程被 kill
+# 原始 .so 文件在初始化时调用 C 级 exit() 导致进程退出
+# 解决方案：重命名 .so 文件，用纯 Python stub 替换
+# ============================================================
+
+SCRIPT_PY="/workspace/.cnb-xu/script_py"
+PATCH_SRC="/workspace/user/nsfw_patch"
+
+if [ -d "$SCRIPT_PY" ]; then
+    echo "[NSFW Patch] 正在应用 NSFW 检测禁用补丁..."
+
+    # 1. 重命名原始 .so 文件（如果尚未重命名）
+    for so_name in "hook_by_xu" "hook2_by_xu" "nsfw_checker_by_xu"; do
+        so_file="$SCRIPT_PY/${so_name}.cpython-312-x86_64-linux-gnu.so"
+        so_backup="$SCRIPT_PY/${so_name}_original.cpython-312-x86_64-linux-gnu.so"
+        if [ -f "$so_file" ] && [ ! -f "$so_backup" ]; then
+            mv "$so_file" "$so_backup"
+            echo "[NSFW Patch] 已重命名: ${so_name}.so -> ${so_name}_original.so"
+        fi
+        # 如果 .so 存在且 backup 也存在，说明是重复启动，直接删 .so
+        if [ -f "$so_file" ] && [ -f "$so_backup" ]; then
+            rm -f "$so_file"
+            echo "[NSFW Patch] 已删除重复的: ${so_name}.so"
+        fi
+    done
+
+    # 2. 复制 .py stub 文件
+    for py_name in "hook_by_xu.py" "hook2_by_xu.py" "nsfw_checker_by_xu.py"; do
+        if [ -f "$PATCH_SRC/$py_name" ]; then
+            cp -f "$PATCH_SRC/$py_name" "$SCRIPT_PY/$py_name"
+            echo "[NSFW Patch] 已复制: $py_name"
+        fi
+    done
+
+    # 3. 清除 __pycache__ 中的 .so 缓存
+    find "$SCRIPT_PY/__pycache__" -name "*.pyc" -delete 2>/dev/null
+    echo "[NSFW Patch] 已清除 __pycache__"
+
+    echo "[NSFW Patch] 补丁应用完成！NSFW 检测已禁用。"
+else
+    echo "[NSFW Patch] 警告: $SCRIPT_PY 目录不存在，跳过补丁"
+fi
+
+# ============================================================
+# 禁用远程更新脚本 - 防止作者更新覆盖本地修改
+# ============================================================
+
+# 禁用 hotfix（会从 Docker 镜像覆盖 .cnb-xu/ 目录）
+HOTFIX="/workspace/.cnb-xu/script/other/hotfix"
+if [ -f "$HOTFIX" ] && ! grep -q "^exit 0" "$HOTFIX"; then
+    sed -i '1a\\n# [DISABLED] 防止 Docker overlay 覆盖 .cnb-xu/ 目录\nexit 0' "$HOTFIX"
+    echo "[Update Guard] 已禁用 hotfix"
+fi
+
+# 禁用 update-repo（会从 cnb.cool/cnb-xu/comfyui 拉取配置）
+UPDATE_REPO="/workspace/.cnb-xu/script/other/update-repo"
+if [ -f "$UPDATE_REPO" ] && ! grep -q "^exit 0" "$UPDATE_REPO"; then
+    sed -i '1a\\n# [DISABLED] 防止从远程仓库拉取配置\nexit 0' "$UPDATE_REPO"
+    echo "[Update Guard] 已禁用 update-repo"
+fi
+
+# 修改 update 脚本（禁用 git restore/pull，保留 patch_by_xu.py 和 pip install）
+UPDATE_SCRIPT="/workspace/.cnb-xu/script/comfyui/update"
+if [ -f "$UPDATE_SCRIPT" ]; then
+    if grep -q "^cd /workspace/comfyui$" "$UPDATE_SCRIPT" && ! grep -q "^# git restore" "$UPDATE_SCRIPT"; then
+        sed -i 's|^cd /workspace/comfyui$|cd /workspace/comfyui\n# git restore .\n# git switch master\n# git pull|' "$UPDATE_SCRIPT"
+        # 在 cd 行前面插入注释头
+        sed -i '/^cd \/workspace\/comfyui/i # [MODIFIED] git restore/pull 已禁用，防止覆盖本地修改' "$UPDATE_SCRIPT"
+        echo "[Update Guard] 已禁用 update 中的 git pull"
+    fi
+fi
+
+# 禁用 switch（会 git checkout 覆盖本地修改）
+SWITCH_SCRIPT="/workspace/.cnb-xu/script/comfyui/switch"
+if [ -f "$SWITCH_SCRIPT" ] && ! grep -q "^exit 0" "$SWITCH_SCRIPT"; then
+    sed -i '1a\\n# [DISABLED] 防止 git checkout 覆盖本地修改\nexit 0' "$SWITCH_SCRIPT"
+    echo "[Update Guard] 已禁用 switch"
+fi
+
+# 修改 init2（禁用 ComfyUI 自动 git pull）
+INIT2="/workspace/.cnb-xu/script/other/init2"
+if [ -f "$INIT2" ] && grep -q "git restore \." "$INIT2" && ! grep -q "^#.*git restore" "$INIT2"; then
+    sed -i 's|^\(\s*\)git restore \.|\1# git restore .|' "$INIT2"
+    sed -i 's|^\(\s*\)git pull|\1# git pull|' "$INIT2"
+    sed -i 's|^\(\s*git restore\)|#\1|' "$INIT2"
+    sed -i 's|^\(\s*git pull\)|#\1|' "$INIT2"
+    echo "[Update Guard] 已禁用 init2 中的 git pull"
+fi
+
+echo "[启动优化] 远程拉取已全部禁用，启动速度将更快"
+
+# ============================================================
+# 原有初始化命令
+# ============================================================
+
 # 启动CNB域名持续上报（后台运行）
 nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
-
-# 禁用NSFW检测：用stub模块替代原始.so（每次启动自动构建）
-# 注意：直接删除 .so 会导致"核心模块缺失"错误，需要用stub替换
-STUB_DIR="/workspace/.cnb-xu/script_py"
-STUB_PY="$STUB_DIR/nsfw_checker_by_xu.py"
-STUB_SO="$STUB_DIR/nsfw_checker_by_xu.cpython-312-x86_64-linux-gnu.so"
-if [ -d "$STUB_DIR" ]; then
-  cat > "$STUB_PY" << 'STUBEOF'
-import numpy as np
-import torch
-class NSFW_Content_Found(Exception):
-    def __init__(self, msg="NSFW Content Found !"):
-        super().__init__(msg)
-def check_image(image, *a, **kw): return False
-def check_vae_decode_images(images, *a, **kw): return images
-def detect_nsfw(image, *a, **kw): return False
-def detect_with_nsfw_1(image, *a, **kw): return False
-def detect_with_nsfw_2(image, *a, **kw): return False
-def detect_with_nsfw_3(image, *a, **kw): return False
-def prepare_detect_frame(image, *a, **kw): return image
-def fit_frame(image, *a, **kw): return image
-def forward_nsfw(image, *a, **kw): return False
-class NSFW_Checker:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {"required": {"image": ("IMAGE", {"tooltip": "The images to check."})}, "hidden": {"prompt": "PROMPT", "extra_pnginfo": "EXTRA_PNGINFO"}}
-    RETURN_TYPES = ("IMAGE",)
-    FUNCTION = "save_images"
-    OUTPUT_NODE = True
-    CATEGORY = "CNB-Xu"
-    DESCRIPTION = "NSFW Checker (disabled)"
-    def save_images(self, image, prompt=None, extra_pnginfo=None):
-        return {"ui": {}, "result": (image,)}
-NODE_CLASS_MAPPINGS = {"NSFW_Checker": NSFW_Checker}
-STUBEOF
-  python3 -c "
-from Cython.Build import cythonize
-from setuptools import Extension, Distribution
-ext = Extension('nsfw_checker_by_xu', sources=['$STUB_PY'])
-dist = Distribution({'ext_modules': cythonize([ext], language_level=3)})
-cmd = dist.get_command_obj('build_ext')
-cmd.build_lib = '$STUB_DIR'
-cmd.inplace = True
-cmd.ensure_finalized()
-cmd.run()
-" 2>/dev/null
-  rm -f "$STUB_DIR/nsfw_checker_by_xu.c"
-  echo "NSFW checker stub built and replaced"
-  # 修改 patch_by_xu.py，在 patch_nodes() 后注入禁用 NSFW 的代码
-  sed -i 's/    patch_nodes()\n    if args.auto_launch:/    patch_nodes()\n    import hook2_by_xu\n    hook2_by_xu.enable_check = False\n    if args.auto_launch:/' "$STUB_DIR/patch_by_xu.py" 2>/dev/null
-  # 用python做更可靠的替换
-  python3 -c "
-p='$STUB_DIR/patch_by_xu.py'
-import os
-if os.path.exists(p):
-    with open(p,'r') as f: c=f.read()
-    old='    patch_nodes()\n    if args.auto_launch:'
-    new='    patch_nodes()\n    import hook2_by_xu\n    hook2_by_xu.enable_check = False\n    if args.auto_launch:'
-    if old in c and 'enable_check' not in c:
-        c=c.replace(old,new)
-        with open(p,'w') as f: f.write(c)
-        print('patch_by_xu.py patched: NSFW disabled')
-    elif 'enable_check' in c:
-        print('patch_by_xu.py already has NSFW disable')
-    else:
-        print('patch_by_xu.py: pattern not found')
-" 2>/dev/null
-fi
 
 # 安装Tencent Cloud CodeBuddy扩展
 code-server --install-extension Tencent-Cloud.coding-copilot

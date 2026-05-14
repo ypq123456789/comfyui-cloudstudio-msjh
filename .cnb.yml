@@ -3,8 +3,9 @@
 # 1. 开源项目，欢迎大家fork、copy，但copy希望注明出处且继续保持开源~
 # 2. 如果遇到问题或想定制环境，进讨论群了解更多~
 
-include:
-  - https://cnb.cool/cnb-xu/docs/-/blob/main/comfyui/cnb.yml
+# [DISABLED] 远程 include 已禁用，防止从作者仓库拉取新配置覆盖本地设置
+# include:
+#   - https://cnb.cool/cnb-xu/docs/-/blob/main/comfyui/cnb.yml
 
 .pipeline: &pipeline
   clouddev:
