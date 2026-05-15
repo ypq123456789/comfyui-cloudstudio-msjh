@@ -340,7 +340,7 @@ MSJH_SOURCE_USER="/workspace/user"
 MSJH_COMFY_USER="/workspace/comfyui/user"
 MSJH_SOURCE_WORKFLOWS="$MSJH_SOURCE_USER/default/workflows"
 MSJH_TARGET_WORKFLOWS="$MSJH_COMFY_USER/default/workflows/墨色江湖"
-MSJH_DEFAULT_WORKFLOW="$MSJH_TARGET_WORKFLOWS/墨色江湖-默认非NSFW-Qwen_GGUF.json"
+MSJH_DEFAULT_WORKFLOW="$MSJH_TARGET_WORKFLOWS/墨色江湖-默认非NSFW-ZImageTurbo.json"
 MSJH_NSFw_WORKFLOW="$MSJH_TARGET_WORKFLOWS/墨色江湖-NSFW专用-mPMix.json"
 
 if [ -d "$MSJH_SOURCE_USER/default" ]; then
@@ -348,8 +348,11 @@ if [ -d "$MSJH_SOURCE_USER/default" ]; then
     cp -af "$MSJH_SOURCE_USER/default" "$MSJH_COMFY_USER/"
     mkdir -p "$MSJH_TARGET_WORKFLOWS"
 
-    if [ -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-默认非NSFW-Qwen_GGUF.json" ]; then
-        cp -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-默认非NSFW-Qwen_GGUF.json" "$MSJH_DEFAULT_WORKFLOW"
+    rm -f "$MSJH_TARGET_WORKFLOWS/墨色江湖-默认非NSFW-Qwen_GGUF.json" \
+          "$MSJH_COMFY_USER/default/workflows/墨色江湖-默认非NSFW-Qwen_GGUF.json"
+
+    if [ -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-默认非NSFW-ZImageTurbo.json" ]; then
+        cp -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-默认非NSFW-ZImageTurbo.json" "$MSJH_DEFAULT_WORKFLOW"
     fi
     if [ -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-NSFW专用-mPMix.json" ]; then
         cp -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-NSFW专用-mPMix.json" "$MSJH_NSFw_WORKFLOW"
@@ -357,7 +360,7 @@ if [ -d "$MSJH_SOURCE_USER/default" ]; then
 
     # 同时保留在 workflows 根目录，兼容不同版本的工作流浏览器索引。
     if [ -f "$MSJH_DEFAULT_WORKFLOW" ]; then
-        cp -f "$MSJH_DEFAULT_WORKFLOW" "$MSJH_COMFY_USER/default/workflows/墨色江湖-默认非NSFW-Qwen_GGUF.json"
+        cp -f "$MSJH_DEFAULT_WORKFLOW" "$MSJH_COMFY_USER/default/workflows/墨色江湖-默认非NSFW-ZImageTurbo.json"
     fi
     if [ -f "$MSJH_NSFw_WORKFLOW" ]; then
         cp -f "$MSJH_NSFw_WORKFLOW" "$MSJH_COMFY_USER/default/workflows/墨色江湖-NSFW专用-mPMix.json"
@@ -387,25 +390,35 @@ workflow = json.loads(workflow_path.read_text(encoding="utf-8"))
 js = f'''import {{ app }} from "/scripts/app.js";
 
 const MSJH_DEFAULT_WORKFLOW = {json.dumps(workflow, ensure_ascii=False)};
+const MSJH_WORKFLOW_NAME = "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo)";
 
 function graphLooksEmpty() {{
   const nodes = app.graph?._nodes || [];
-  return nodes.length === 0;
+  const graphName = app.graph?.extra?.workflow_name || document.title || "";
+  return nodes.length === 0 || (/Unsaved Workflow|未保存/.test(graphName) && nodes.length <= 1);
+}}
+
+function markWorkflowName() {{
+  if (app.graph) {{
+    app.graph.extra = app.graph.extra || {{}};
+    app.graph.extra.workflow_name = MSJH_WORKFLOW_NAME;
+  }}
+  document.title = MSJH_WORKFLOW_NAME;
 }}
 
 function loadMoRanDefaultWorkflow() {{
   if (!app?.loadGraphData || !graphLooksEmpty()) return;
-  app.loadGraphData(MSJH_DEFAULT_WORKFLOW);
-  app.graph?.setDirtyCanvas?.(true, true);
-  document.title = "墨色江湖 - 默认非NSFW工作流";
-  console.log("[MoRanJiangHu] 已自动载入默认非NSFW工作流");
+  Promise.resolve(app.loadGraphData(MSJH_DEFAULT_WORKFLOW)).finally(() => {{
+    markWorkflowName();
+    app.graph?.setDirtyCanvas?.(true, true);
+    console.log("[MoRanJiangHu] 已自动载入默认非NSFW工作流");
+  }});
 }}
 
 app.registerExtension({{
   name: "MoRanJiangHu.DefaultWorkflow",
   async setup() {{
-    setTimeout(loadMoRanDefaultWorkflow, 800);
-    setTimeout(loadMoRanDefaultWorkflow, 2000);
+    [300, 1000, 2500, 5000].forEach((delay) => setTimeout(loadMoRanDefaultWorkflow, delay));
   }},
 }});
 '''

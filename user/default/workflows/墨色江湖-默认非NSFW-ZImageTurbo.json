@@ -212,7 +212,7 @@
         }
       },
       "widgets_values": [
-        "z-image/z"
+        "moranjianghu/non-nsfw"
       ]
     },
     {
@@ -516,7 +516,7 @@
         }
       },
       "widgets_values": [
-        "默认非 NSFW 工作流：使用 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。已在 CNB 在线环境验证可以成功出图，适合普通头像、立绘、剧情图和客户手动测试。"
+        "默认非 NSFW 工作流：使用 NunchakuZImageDiTLoader 加载 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。适合普通头像、立绘、剧情图和客户手动测试。"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -677,7 +677,7 @@
     },
     {
       "id": 46,
-      "type": "UNETLoader",
+      "type": "NunchakuZImageDiTLoader",
       "pos": [
         125.15182888709879,
         1227.943811403923
@@ -689,28 +689,7 @@
       "flags": {},
       "order": 7,
       "mode": 0,
-      "inputs": [
-        {
-          "label": "unet_name",
-          "localized_name": "UNet名称",
-          "name": "unet_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "unet_name"
-          },
-          "link": null
-        },
-        {
-          "label": "weight_dtype",
-          "localized_name": "数据类型",
-          "name": "weight_dtype",
-          "type": "COMBO",
-          "widget": {
-            "name": "weight_dtype"
-          },
-          "link": null
-        }
-      ],
+      "inputs": [],
       "outputs": [
         {
           "label": "MODEL",
@@ -723,9 +702,9 @@
         }
       ],
       "properties": {
-        "cnr_id": "comfy-core",
+        "cnr_id": "comfyui-nunchaku",
         "ver": "0.3.73",
-        "Node name for S&R": "UNETLoader",
+        "Node name for S&R": "NunchakuZImageDiTLoader",
         "enableTabs": false,
         "tabWidth": 65,
         "tabXOffset": 10,
@@ -747,10 +726,9 @@
         }
       },
       "widgets_values": [
-        "z_image_turbo_bf16.safetensors",
-        "default"
+        "z_image_turbo_bf16.safetensors"
       ],
-      "title": "默认非NSFW主模型 - Z-Image Turbo"
+      "title": "默认非NSFW主模型 - Nunchaku Z-Image Turbo"
     },
     {
       "id": 45,
@@ -1072,7 +1050,7 @@
     "ue_links": [],
     "links_added_by_ue": [],
     "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo)",
-    "msjh_note": "默认非 NSFW 工作流：使用 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。已在 CNB 在线环境验证可以成功出图，适合普通头像、立绘、剧情图和客户手动测试。"
+    "msjh_note": "默认非 NSFW 工作流：使用 NunchakuZImageDiTLoader 加载 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。适合普通头像、立绘、剧情图和客户手动测试。"
   },
   "version": 0.4
 }
