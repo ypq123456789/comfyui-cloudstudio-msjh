@@ -156,6 +156,32 @@ if [ -n "$MISSING_PY_DEPS" ]; then
 fi
 
 # ============================================================
+# ComfyUI custom-scripts API 兼容补丁 - 修复 get_full_path 多余参数
+# ============================================================
+
+CUSTOM_SCRIPTS_PATCH="/workspace/comfyui/custom_nodes_preset/comfyui-custom-scripts/py/better_combos.py"
+if [ -f "$CUSTOM_SCRIPTS_PATCH" ]; then
+    python - "$CUSTOM_SCRIPTS_PATCH" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+text, count = re.subn(
+    r'folder_paths\.get_full_path\(\s*type\s*,\s*item_name\s*,\s*auto_download\s*=\s*False\s*\)',
+    'folder_paths.get_full_path(type, item_name)',
+    text,
+)
+if count > 0:
+    path.write_text(text, encoding="utf-8")
+PY
+    if [ $? -eq 0 ] && grep -q "folder_paths.get_full_path(type, item_name)" "$CUSTOM_SCRIPTS_PATCH" 2>/dev/null; then
+        echo "[Compatibility Patch] 已修复 comfyui-custom-scripts 的 get_full_path 兼容参数"
+    fi
+fi
+
+# ============================================================
 # 预设工作流模型预下载 - 避免首次点击生图时再等待模型拉取
 # ============================================================
 
