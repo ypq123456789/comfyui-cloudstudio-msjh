@@ -547,7 +547,7 @@
       "mode": 0,
       "inputs": [],
       "outputs": [],
-      "title": "墨色江湖 - 默认非NSFW头像/剧情图 (Qwen GGUF)",
+      "title": "墨色江湖 - NSFW专用生图 (mPMix)",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -556,7 +556,7 @@
         }
       },
       "widgets_values": [
-        "默认非 NSFW 工作流：使用 qwen-image-2512-Q6_K.gguf，经 Qwen Lightning 4steps LoRA 后进入采样器。适合普通头像、立绘、剧情图和客户手动测试。mPMix NSFW 节点保留为备用但不连接。"
+        "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，经同一采样链路输出。仅用于成人/私密测试；默认普通头像和剧情图不要使用本工作流。Qwen GGUF 节点保留为备用但不连接。"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -711,7 +711,7 @@
       },
       "widgets_values": [
         "qwen_3_4b.safetensors",
-        "qwen_image",
+        "lumina2",
         "default"
       ]
     },
@@ -757,7 +757,9 @@
           "localized_name": "模型",
           "name": "MODEL",
           "type": "MODEL",
-          "links": []
+          "links": [
+            51
+          ]
         }
       ],
       "properties": {
@@ -788,7 +790,7 @@
         "mPMix_NSFW_V9_fp8.safetensors",
         "default"
       ],
-      "title": "备用NSFW模型 - 未连接"
+      "title": "NSFW主模型加载 - mPMix"
     },
     {
       "id": 45,
@@ -891,9 +893,7 @@
           "localized_name": "模型",
           "name": "MODEL",
           "type": "MODEL",
-          "links": [
-            51
-          ]
+          "links": []
         }
       ],
       "properties": {
@@ -911,7 +911,7 @@
       "widgets_values": [
         "qwen-image-2512-Q6_K.gguf"
       ],
-      "title": "默认非NSFW主模型 - Qwen GGUF"
+      "title": "备用非NSFW模型 - 未连接"
     },
     {
       "id": 53,
@@ -1175,7 +1175,7 @@
     ],
     [
       51,
-      49,
+      46,
       0,
       51,
       0,
@@ -1295,8 +1295,8 @@
     "workflowRendererVersion": "LG",
     "ue_links": [],
     "links_added_by_ue": [],
-    "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (Qwen GGUF)",
-    "msjh_note": "默认非 NSFW 工作流：使用 qwen-image-2512-Q6_K.gguf，经 Qwen Lightning 4steps LoRA 后进入采样器。适合普通头像、立绘、剧情图和客户手动测试。mPMix NSFW 节点保留为备用但不连接。"
+    "workflow_name": "墨色江湖 - NSFW专用生图 (mPMix)",
+    "msjh_note": "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，经同一采样链路输出。仅用于成人/私密测试；默认普通头像和剧情图不要使用本工作流。Qwen GGUF 节点保留为备用但不连接。"
   },
   "version": 0.4
 }
