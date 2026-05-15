@@ -507,7 +507,7 @@
       "mode": 0,
       "inputs": [],
       "outputs": [],
-      "title": "墨色江湖 - 默认非NSFW头像/剧情图 (Qwen GGUF)",
+      "title": "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo)",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -516,7 +516,7 @@
         }
       },
       "widgets_values": [
-        "默认非 NSFW 工作流：使用 qwen-image-2512-Q6_K.gguf，经 Qwen Lightning 4steps LoRA 后进入采样器。适合普通头像、立绘、剧情图和客户手动测试。mPMix NSFW 节点保留为备用但不连接。"
+        "默认非 NSFW 工作流：使用 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。已在 CNB 在线环境验证可以成功出图，适合普通头像、立绘、剧情图和客户手动测试。"
       ],
       "color": "#222",
       "bgcolor": "#000"

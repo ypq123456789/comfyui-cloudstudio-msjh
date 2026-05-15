@@ -556,7 +556,7 @@
         }
       },
       "widgets_values": [
-        "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，经同一采样链路输出。仅用于成人/私密测试；默认普通头像和剧情图不要使用本工作流。Qwen GGUF 节点保留为备用但不连接。"
+        "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。普通头像和剧情图请使用默认非 NSFW 工作流；本工作流只保留实际执行所需模型，避免 ComfyUI 报缺失模型。"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -623,7 +623,7 @@
         }
       },
       "widgets_values": [
-        "ae.sft"
+        "ae.safetensors"
       ]
     },
     {
@@ -862,127 +862,6 @@
       "title": "正面提示词编码"
     },
     {
-      "id": 49,
-      "type": "UnetLoaderGGUF",
-      "pos": [
-        141.17329447005932,
-        1126.591103288543
-      ],
-      "size": [
-        270,
-        58
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "Unet模型名称",
-          "localized_name": "Unet模型名称",
-          "name": "unet_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "unet_name"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "模型",
-          "localized_name": "模型",
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": []
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-gguf",
-        "ver": "1.1.10",
-        "Node name for S&R": "UnetLoaderGGUF",
-        "ue_properties": {
-          "widget_ue_connectable": {
-            "unet_name": true
-          },
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "qwen-image-2512-Q6_K.gguf"
-      ],
-      "title": "备用非NSFW模型 - 未连接"
-    },
-    {
-      "id": 53,
-      "type": "LoraLoaderModelOnly",
-      "pos": [
-        118.86893955545375,
-        1451.5441194680652
-      ],
-      "size": [
-        270,
-        82
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "model",
-          "localized_name": "模型",
-          "name": "model",
-          "type": "MODEL",
-          "link": 49
-        },
-        {
-          "label": "lora_name",
-          "localized_name": "LoRA名称",
-          "name": "lora_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "lora_name"
-          },
-          "link": null
-        },
-        {
-          "label": "strength_model",
-          "localized_name": "模型强度",
-          "name": "strength_model",
-          "type": "FLOAT",
-          "widget": {
-            "name": "strength_model"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "MODEL",
-          "localized_name": "模型",
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            50
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.76",
-        "Node name for S&R": "LoraLoaderModelOnly",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
-        1
-      ]
-    },
-    {
       "id": 48,
       "type": "NunchakuZImageDiTLoader",
       "pos": [
@@ -1158,22 +1037,6 @@
       "IMAGE"
     ],
     [
-      49,
-      51,
-      0,
-      53,
-      0,
-      "MODEL"
-    ],
-    [
-      50,
-      53,
-      0,
-      47,
-      0,
-      "MODEL"
-    ],
-    [
       51,
       46,
       0,
@@ -1196,6 +1059,14 @@
       44,
       2,
       "CONDITIONING"
+    ],
+    [
+      50,
+      46,
+      0,
+      47,
+      0,
+      "MODEL"
     ]
   ],
   "groups": [
@@ -1296,7 +1167,7 @@
     "ue_links": [],
     "links_added_by_ue": [],
     "workflow_name": "墨色江湖 - NSFW专用生图 (mPMix)",
-    "msjh_note": "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，经同一采样链路输出。仅用于成人/私密测试；默认普通头像和剧情图不要使用本工作流。Qwen GGUF 节点保留为备用但不连接。"
+    "msjh_note": "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。普通头像和剧情图请使用默认非 NSFW 工作流；本工作流只保留实际执行所需模型，避免 ComfyUI 报缺失模型。"
   },
   "version": 0.4
 }

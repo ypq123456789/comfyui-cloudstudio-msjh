@@ -114,7 +114,7 @@
           "localized_name": "模型",
           "name": "model",
           "type": "MODEL",
-          "link": 50
+          "link": 51
         },
         {
           "label": "shift",
@@ -159,46 +159,6 @@
       "widgets_values": [
         3
       ]
-    },
-    {
-      "id": 51,
-      "type": "Reroute",
-      "pos": [
-        464.8168784110087,
-        1232.3027206995405
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 9,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 51
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "MODEL",
-          "links": [
-            49
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false,
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      }
     },
     {
       "id": 9,
@@ -547,7 +507,7 @@
       "mode": 0,
       "inputs": [],
       "outputs": [],
-      "title": "墨色江湖 - 默认非NSFW头像/剧情图 (Qwen GGUF)",
+      "title": "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo)",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -556,7 +516,7 @@
         }
       },
       "widgets_values": [
-        "默认非 NSFW 工作流：使用 qwen-image-2512-Q6_K.gguf，经 Qwen Lightning 4steps LoRA 后进入采样器。适合普通头像、立绘、剧情图和客户手动测试。mPMix NSFW 节点保留为备用但不连接。"
+        "默认非 NSFW 工作流：使用 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。已在 CNB 在线环境验证可以成功出图，适合普通头像、立绘、剧情图和客户手动测试。"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -623,7 +583,7 @@
         }
       },
       "widgets_values": [
-        "ae.sft"
+        "ae.safetensors"
       ]
     },
     {
@@ -711,7 +671,7 @@
       },
       "widgets_values": [
         "qwen_3_4b.safetensors",
-        "qwen_image",
+        "lumina2",
         "default"
       ]
     },
@@ -757,7 +717,9 @@
           "localized_name": "模型",
           "name": "MODEL",
           "type": "MODEL",
-          "links": []
+          "links": [
+            51
+          ]
         }
       ],
       "properties": {
@@ -785,10 +747,10 @@
         }
       },
       "widgets_values": [
-        "mPMix_NSFW_V9_fp8.safetensors",
+        "z_image_turbo_bf16.safetensors",
         "default"
       ],
-      "title": "备用NSFW模型 - 未连接"
+      "title": "默认非NSFW主模型 - Z-Image Turbo"
     },
     {
       "id": 45,
@@ -858,176 +820,6 @@
       "color": "#232",
       "bgcolor": "#353",
       "title": "正面提示词编码"
-    },
-    {
-      "id": 49,
-      "type": "UnetLoaderGGUF",
-      "pos": [
-        141.17329447005932,
-        1126.591103288543
-      ],
-      "size": [
-        270,
-        58
-      ],
-      "flags": {},
-      "order": 5,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "Unet模型名称",
-          "localized_name": "Unet模型名称",
-          "name": "unet_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "unet_name"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "模型",
-          "localized_name": "模型",
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            51
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-gguf",
-        "ver": "1.1.10",
-        "Node name for S&R": "UnetLoaderGGUF",
-        "ue_properties": {
-          "widget_ue_connectable": {
-            "unet_name": true
-          },
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "qwen-image-2512-Q6_K.gguf"
-      ],
-      "title": "默认非NSFW主模型 - Qwen GGUF"
-    },
-    {
-      "id": 53,
-      "type": "LoraLoaderModelOnly",
-      "pos": [
-        118.86893955545375,
-        1451.5441194680652
-      ],
-      "size": [
-        270,
-        82
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "label": "model",
-          "localized_name": "模型",
-          "name": "model",
-          "type": "MODEL",
-          "link": 49
-        },
-        {
-          "label": "lora_name",
-          "localized_name": "LoRA名称",
-          "name": "lora_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "lora_name"
-          },
-          "link": null
-        },
-        {
-          "label": "strength_model",
-          "localized_name": "模型强度",
-          "name": "strength_model",
-          "type": "FLOAT",
-          "widget": {
-            "name": "strength_model"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "label": "MODEL",
-          "localized_name": "模型",
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            50
-          ]
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfy-core",
-        "ver": "0.3.76",
-        "Node name for S&R": "LoraLoaderModelOnly",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "input_ue_unconnectable": {},
-          "version": "7.8"
-        }
-      },
-      "widgets_values": [
-        "Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
-        1
-      ]
-    },
-    {
-      "id": 48,
-      "type": "NunchakuZImageDiTLoader",
-      "pos": [
-        146.8279293816924,
-        1013.7654678302082
-      ],
-      "size": [
-        303.077734375,
-        58
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "localized_name": "model_name",
-          "name": "model_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "model_name"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "localized_name": "模型",
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": []
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-nunchaku",
-        "ver": "1.2.1",
-        "Node name for S&R": "NunchakuZImageDiTLoader",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "z_image_turbo_bf16.safetensors"
-      ]
     },
     {
       "id": 54,
@@ -1158,30 +950,6 @@
       "IMAGE"
     ],
     [
-      49,
-      51,
-      0,
-      53,
-      0,
-      "MODEL"
-    ],
-    [
-      50,
-      53,
-      0,
-      47,
-      0,
-      "MODEL"
-    ],
-    [
-      51,
-      49,
-      0,
-      51,
-      0,
-      "MODEL"
-    ],
-    [
       52,
       39,
       0,
@@ -1196,6 +964,14 @@
       44,
       2,
       "CONDITIONING"
+    ],
+    [
+      51,
+      46,
+      0,
+      47,
+      0,
+      "MODEL"
     ]
   ],
   "groups": [
@@ -1295,8 +1071,8 @@
     "workflowRendererVersion": "LG",
     "ue_links": [],
     "links_added_by_ue": [],
-    "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (Qwen GGUF)",
-    "msjh_note": "默认非 NSFW 工作流：使用 qwen-image-2512-Q6_K.gguf，经 Qwen Lightning 4steps LoRA 后进入采样器。适合普通头像、立绘、剧情图和客户手动测试。mPMix NSFW 节点保留为备用但不连接。"
+    "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo 备用副本)",
+    "msjh_note": "默认非 NSFW 工作流：使用 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。已在 CNB 在线环境验证可以成功出图，适合普通头像、立绘、剧情图和客户手动测试。"
   },
   "version": 0.4
 }
