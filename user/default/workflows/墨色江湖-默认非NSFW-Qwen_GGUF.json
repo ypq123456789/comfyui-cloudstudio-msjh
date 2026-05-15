@@ -157,7 +157,7 @@
         }
       },
       "widgets_values": [
-        3
+        3.1
       ]
     },
     {
@@ -611,8 +611,8 @@
         "secondTabWidth": 65,
         "models": [
           {
-            "name": "ae.safetensors",
-            "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/vae/ae.safetensors",
+            "name": "qwen_image_vae.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors",
             "directory": "vae"
           }
         ],
@@ -623,7 +623,7 @@
         }
       },
       "widgets_values": [
-        "ae.sft"
+        "qwen_image_vae.safetensors"
       ]
     },
     {
@@ -698,8 +698,8 @@
         "secondTabWidth": 65,
         "models": [
           {
-            "name": "qwen_3_4b.safetensors",
-            "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b.safetensors",
+            "name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+            "url": "https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors",
             "directory": "text_encoders"
           }
         ],
@@ -710,7 +710,7 @@
         }
       },
       "widgets_values": [
-        "qwen_3_4b.safetensors",
+        "qwen_2.5_vl_7b_fp8_scaled.safetensors",
         "qwen_image",
         "default"
       ]
@@ -1295,8 +1295,8 @@
     "workflowRendererVersion": "LG",
     "ue_links": [],
     "links_added_by_ue": [],
-    "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (Qwen GGUF)",
-    "msjh_note": "默认非 NSFW 工作流：使用 qwen-image-2512-Q6_K.gguf，经 Qwen Lightning 4steps LoRA 后进入采样器。适合普通头像、立绘、剧情图和客户手动测试。mPMix NSFW 节点保留为备用但不连接。"
+    "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (Qwen-Image 2512 GGUF)",
+    "msjh_note": "默认非 NSFW 工作流：使用 qwen-image-2512-Q6_K.gguf，配套 qwen_2.5_vl_7b_fp8_scaled 文本编码器和 qwen_image_vae，避免 hidden size 不匹配。适合普通头像、立绘、剧情图和客户手动测试。"
   },
   "version": 0.4
 }
