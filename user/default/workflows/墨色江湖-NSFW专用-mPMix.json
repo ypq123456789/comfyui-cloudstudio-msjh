@@ -556,7 +556,7 @@
         }
       },
       "widgets_values": [
-        "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。普通头像和剧情图请使用默认非 NSFW 工作流；本工作流只保留实际执行所需模型，避免 ComfyUI 报缺失模型。"
+        "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，经 Qwen-Image-2512-Lightning-4steps LoRA 后进入采样器。配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors；普通头像和剧情图请使用默认非 NSFW 工作流。"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -969,6 +969,75 @@
       ],
       "color": "#322",
       "bgcolor": "#533"
+    },
+    {
+      "id": 53,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        118.86893955545375,
+        1451.5441194680652
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "model",
+          "localized_name": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 49
+        },
+        {
+          "label": "lora_name",
+          "localized_name": "LoRA名称",
+          "name": "lora_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "lora_name"
+          },
+          "link": null
+        },
+        {
+          "label": "strength_model",
+          "localized_name": "模型强度",
+          "name": "strength_model",
+          "type": "FLOAT",
+          "widget": {
+            "name": "strength_model"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "MODEL",
+          "localized_name": "模型",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            50
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        }
+      },
+      "widgets_values": [
+        "Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+        1
+      ]
     }
   ],
   "links": [
@@ -1037,6 +1106,22 @@
       "IMAGE"
     ],
     [
+      49,
+      51,
+      0,
+      53,
+      0,
+      "MODEL"
+    ],
+    [
+      50,
+      53,
+      0,
+      47,
+      0,
+      "MODEL"
+    ],
+    [
       51,
       46,
       0,
@@ -1059,14 +1144,6 @@
       44,
       2,
       "CONDITIONING"
-    ],
-    [
-      50,
-      46,
-      0,
-      47,
-      0,
-      "MODEL"
     ]
   ],
   "groups": [
@@ -1166,8 +1243,8 @@
     "workflowRendererVersion": "LG",
     "ue_links": [],
     "links_added_by_ue": [],
-    "workflow_name": "墨色江湖 - NSFW专用生图 (mPMix)",
-    "msjh_note": "NSFW 专用工作流：使用 mPMix_NSFW_V9_fp8.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。普通头像和剧情图请使用默认非 NSFW 工作流；本工作流只保留实际执行所需模型，避免 ComfyUI 报缺失模型。"
+    "workflow_name": "墨色江湖 - NSFW专用生图 (mPMix + Lightning LoRA)",
+    "msjh_note": "NSFW 专用工作流：mPMix_NSFW_V9_fp8.safetensors -> Qwen-Image-2512-Lightning-4steps LoRA -> AuraFlow 采样。已移除未连接且会导致缺失提示的 Qwen GGUF 备用节点，并保留 LoRA 作为主链路一环。"
   },
   "version": 0.4
 }
