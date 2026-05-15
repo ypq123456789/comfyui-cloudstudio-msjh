@@ -1,0 +1,9 @@
+{
+  "remote.autoForwardPorts": true,
+  "remote.portsAttributes": {
+    "8188": {
+      "label": "ComfyUI",
+      "onAutoForward": "openBrowser"
+    }
+  }
+}

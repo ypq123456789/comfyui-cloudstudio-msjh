@@ -156,6 +156,34 @@ if [ -n "$MISSING_PY_DEPS" ]; then
 fi
 
 # ============================================================
+# ComfyUI 前端版本兜底 - 修复 Backend 要求 1.43.18+ 但镜像仍是旧前端的问题
+# ============================================================
+
+FRONTEND_UPDATE_NEEDED="$("$PYTHON_BIN" - <<'PY'
+import re
+from importlib import metadata
+
+def version_tuple(value):
+    nums = [int(x) for x in re.findall(r"\d+", value)[:3]]
+    while len(nums) < 3:
+        nums.append(0)
+    return tuple(nums)
+
+try:
+    installed = metadata.version("comfyui-frontend-package")
+except metadata.PackageNotFoundError:
+    installed = "0.0.0"
+
+print("yes" if version_tuple(installed) < (1, 43, 18) else "no")
+PY
+)"
+
+if [ "$FRONTEND_UPDATE_NEEDED" = "yes" ] && [ -f /workspace/comfyui/requirements.txt ]; then
+    echo "[Frontend Update] ComfyUI frontend 版本偏低，正在同步 requirements.txt"
+    "$PIP_BIN" install -r /workspace/comfyui/requirements.txt
+fi
+
+# ============================================================
 # ComfyUI custom-scripts API 兼容补丁 - 修复 get_full_path 多余参数
 # ============================================================
 
@@ -302,6 +330,89 @@ with open(path, "r", encoding="utf-8-sig") as fh:
 PY
 )
     echo "[Model Prefetch] 预设模型检查完成"
+fi
+
+# ============================================================
+# 墨色江湖工作流与默认打开页 - 同步到 ComfyUI 实际用户目录并自动载入默认工作流
+# ============================================================
+
+MSJH_SOURCE_USER="/workspace/user"
+MSJH_COMFY_USER="/workspace/comfyui/user"
+MSJH_SOURCE_WORKFLOWS="$MSJH_SOURCE_USER/default/workflows"
+MSJH_TARGET_WORKFLOWS="$MSJH_COMFY_USER/default/workflows/墨色江湖"
+MSJH_DEFAULT_WORKFLOW="$MSJH_TARGET_WORKFLOWS/墨色江湖-默认非NSFW-Qwen_GGUF.json"
+MSJH_NSFw_WORKFLOW="$MSJH_TARGET_WORKFLOWS/墨色江湖-NSFW专用-mPMix.json"
+
+if [ -d "$MSJH_SOURCE_USER/default" ]; then
+    mkdir -p "$MSJH_COMFY_USER"
+    cp -af "$MSJH_SOURCE_USER/default" "$MSJH_COMFY_USER/"
+    mkdir -p "$MSJH_TARGET_WORKFLOWS"
+
+    if [ -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-默认非NSFW-Qwen_GGUF.json" ]; then
+        cp -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-默认非NSFW-Qwen_GGUF.json" "$MSJH_DEFAULT_WORKFLOW"
+    fi
+    if [ -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-NSFW专用-mPMix.json" ]; then
+        cp -f "$MSJH_SOURCE_WORKFLOWS/墨色江湖-NSFW专用-mPMix.json" "$MSJH_NSFw_WORKFLOW"
+    fi
+
+    # 同时保留在 workflows 根目录，兼容不同版本的工作流浏览器索引。
+    if [ -f "$MSJH_DEFAULT_WORKFLOW" ]; then
+        cp -f "$MSJH_DEFAULT_WORKFLOW" "$MSJH_COMFY_USER/default/workflows/墨色江湖-默认非NSFW-Qwen_GGUF.json"
+    fi
+    if [ -f "$MSJH_NSFw_WORKFLOW" ]; then
+        cp -f "$MSJH_NSFw_WORKFLOW" "$MSJH_COMFY_USER/default/workflows/墨色江湖-NSFW专用-mPMix.json"
+    fi
+
+    echo "[MoRan Workflow] 已同步墨色江湖两套预置工作流到 ComfyUI 用户目录"
+fi
+
+if [ -f "$MSJH_DEFAULT_WORKFLOW" ]; then
+    MSJH_EXTENSION_DIR="/workspace/comfyui/custom_nodes/msjh_default_workflow"
+    mkdir -p "$MSJH_EXTENSION_DIR/web"
+    cat > "$MSJH_EXTENSION_DIR/__init__.py" <<'PY'
+WEB_DIRECTORY = "./web"
+NODE_CLASS_MAPPINGS = {}
+NODE_DISPLAY_NAME_MAPPINGS = {}
+__all__ = ["WEB_DIRECTORY", "NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
+PY
+    "$PYTHON_BIN" - "$MSJH_DEFAULT_WORKFLOW" "$MSJH_EXTENSION_DIR/web/msjh_default_workflow.js" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+workflow_path = Path(sys.argv[1])
+out_path = Path(sys.argv[2])
+workflow = json.loads(workflow_path.read_text(encoding="utf-8"))
+
+js = f'''import {{ app }} from "/scripts/app.js";
+
+const MSJH_DEFAULT_WORKFLOW = {json.dumps(workflow, ensure_ascii=False)};
+
+function graphLooksEmpty() {{
+  const nodes = app.graph?._nodes || [];
+  return nodes.length === 0;
+}}
+
+function loadMoRanDefaultWorkflow() {{
+  if (!app?.loadGraphData || !graphLooksEmpty()) return;
+  app.loadGraphData(MSJH_DEFAULT_WORKFLOW);
+  app.graph?.setDirtyCanvas?.(true, true);
+  document.title = "墨色江湖 - 默认非NSFW工作流";
+  console.log("[MoRanJiangHu] 已自动载入默认非NSFW工作流");
+}}
+
+app.registerExtension({{
+  name: "MoRanJiangHu.DefaultWorkflow",
+  async setup() {{
+    setTimeout(loadMoRanDefaultWorkflow, 800);
+    setTimeout(loadMoRanDefaultWorkflow, 2000);
+  }},
+}});
+'''
+
+out_path.write_text(js, encoding="utf-8")
+PY
+    echo "[MoRan Workflow] 已安装默认工作流自动载入扩展"
 fi
 
 # ============================================================
