@@ -4,36 +4,6 @@
   "last_link_id": 53,
   "nodes": [
     {
-      "id": 50,
-      "type": "MarkdownNote",
-      "pos": [
-        102.06568527496752,
-        764.320958640468
-      ],
-      "size": [
-        576.7638844709315,
-        131.05119927696495
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "🐏Video Tutorial / 视频教程",
-      "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "### 🐏 [Z-Image-Turbo Encyclopedia: Understand This Beginner-Friendly Image Generation Model in 20 Minutes](https://www.youtube.com/watch?v=zOXCJEkK3hc)\n\n### 🐏 [Z-Image-Turbo百科全书：二十分钟了解这个最适合新手入门的生图模型](https://www.bilibili.com/video/BV15Um7B8EXa)"
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
-    },
-    {
       "id": 43,
       "type": "VAEDecode",
       "pos": [
@@ -114,7 +84,7 @@
           "localized_name": "模型",
           "name": "model",
           "type": "MODEL",
-          "link": 50
+          "link": null
         },
         {
           "label": "shift",
@@ -252,7 +222,7 @@
         }
       },
       "widgets_values": [
-        "z-image/z"
+        "moranjianghu/nsfw"
       ]
     },
     {
@@ -775,8 +745,8 @@
         "secondTabWidth": 65,
         "models": [
           {
-            "name": "z_image_turbo_bf16.safetensors",
-            "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors",
+            "name": "mPMix_NSFW_V9_fp8.safetensors",
+            "url": "https://cnb.cool/bacon159-2026/model/-/lfs/96b875e4e3904555688998a07c45166322f98bb566f870b7d7e7f86cb5aecf70",
             "directory": "diffusion_models"
           }
         ],
@@ -860,53 +830,6 @@
       "color": "#232",
       "bgcolor": "#353",
       "title": "正面提示词编码"
-    },
-    {
-      "id": 48,
-      "type": "NunchakuZImageDiTLoader",
-      "pos": [
-        146.8279293816924,
-        1013.7654678302082
-      ],
-      "size": [
-        303.077734375,
-        58
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [
-        {
-          "localized_name": "model_name",
-          "name": "model_name",
-          "type": "COMBO",
-          "widget": {
-            "name": "model_name"
-          },
-          "link": null
-        }
-      ],
-      "outputs": [
-        {
-          "localized_name": "模型",
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": []
-        }
-      ],
-      "properties": {
-        "cnr_id": "comfyui-nunchaku",
-        "ver": "1.2.1",
-        "Node name for S&R": "NunchakuZImageDiTLoader",
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "z_image_turbo_bf16.safetensors"
-      ]
     },
     {
       "id": 54,
@@ -1032,12 +955,20 @@
           "widget_ue_connectable": {},
           "input_ue_unconnectable": {},
           "version": "7.8"
-        }
+        },
+        "models": [
+          {
+            "name": "Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+            "url": "https://cnb.cool/ai-models/lightx2v/Qwen-Image-2512-Lightning/-/lfs/ad12117461cb41e2ea637fec8df6392ce8e8550c47fbe2b829ed3deb98262066?name=Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+            "directory": "loras"
+          }
+        ]
       },
       "widgets_values": [
         "Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
         1
-      ]
+      ],
+      "title": "Qwen-Image Lightning 加速 LoRA"
     }
   ],
   "links": [
@@ -1243,7 +1174,7 @@
     "workflowRendererVersion": "LG",
     "ue_links": [],
     "links_added_by_ue": [],
-    "workflow_name": "墨色江湖 - NSFW专用生图 (mPMix + Lightning LoRA)",
+    "workflow_name": "墨色江湖 - NSFW专用生图 (mPMix)",
     "msjh_note": "NSFW 专用工作流：mPMix_NSFW_V9_fp8.safetensors -> Qwen-Image-2512-Lightning-4steps LoRA -> AuraFlow 采样。已移除未连接且会导致缺失提示的 Qwen GGUF 备用节点，并保留 LoRA 作为主链路一环。"
   },
   "version": 0.4

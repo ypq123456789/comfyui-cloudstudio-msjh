@@ -4,36 +4,6 @@
   "last_link_id": 53,
   "nodes": [
     {
-      "id": 50,
-      "type": "MarkdownNote",
-      "pos": [
-        102.06568527496752,
-        764.320958640468
-      ],
-      "size": [
-        576.7638844709315,
-        131.05119927696495
-      ],
-      "flags": {},
-      "order": 0,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [],
-      "title": "🐏Video Tutorial / 视频教程",
-      "properties": {
-        "ue_properties": {
-          "widget_ue_connectable": {},
-          "version": "7.8",
-          "input_ue_unconnectable": {}
-        }
-      },
-      "widgets_values": [
-        "### 🐏 [Z-Image-Turbo Encyclopedia: Understand This Beginner-Friendly Image Generation Model in 20 Minutes](https://www.youtube.com/watch?v=zOXCJEkK3hc)\n\n### 🐏 [Z-Image-Turbo百科全书：二十分钟了解这个最适合新手入门的生图模型](https://www.bilibili.com/video/BV15Um7B8EXa)"
-      ],
-      "color": "#222",
-      "bgcolor": "#000"
-    },
-    {
       "id": 43,
       "type": "VAEDecode",
       "pos": [
@@ -114,7 +84,7 @@
           "localized_name": "模型",
           "name": "model",
           "type": "MODEL",
-          "link": 51
+          "link": null
         },
         {
           "label": "shift",
@@ -159,6 +129,46 @@
       "widgets_values": [
         3
       ]
+    },
+    {
+      "id": 51,
+      "type": "Reroute",
+      "pos": [
+        464.8168784110087,
+        1232.3027206995405
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 51
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            49
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.8",
+          "input_ue_unconnectable": {}
+        }
+      }
     },
     {
       "id": 9,
@@ -507,7 +517,7 @@
       "mode": 0,
       "inputs": [],
       "outputs": [],
-      "title": "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo)",
+      "title": "墨色江湖 - 默认非NSFW头像/剧情图 (mPMix稳定版)",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -516,7 +526,7 @@
         }
       },
       "widgets_values": [
-        "默认非 NSFW 工作流：使用 NunchakuZImageDiTLoader 加载 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。适合普通头像、立绘、剧情图和客户手动测试。"
+        "默认非 NSFW 工作流：使用 mPMix_NSFW_V9_fp8.safetensors，经 Qwen-Image-2512-Lightning-4steps LoRA 后进入采样器。配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors；适合普通头像、立绘、物品、剧情图和客户手动测试。"
       ],
       "color": "#222",
       "bgcolor": "#000"
@@ -677,7 +687,7 @@
     },
     {
       "id": 46,
-      "type": "NunchakuZImageDiTLoader",
+      "type": "UNETLoader",
       "pos": [
         125.15182888709879,
         1227.943811403923
@@ -689,7 +699,28 @@
       "flags": {},
       "order": 7,
       "mode": 0,
-      "inputs": [],
+      "inputs": [
+        {
+          "label": "unet_name",
+          "localized_name": "UNet名称",
+          "name": "unet_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "unet_name"
+          },
+          "link": null
+        },
+        {
+          "label": "weight_dtype",
+          "localized_name": "数据类型",
+          "name": "weight_dtype",
+          "type": "COMBO",
+          "widget": {
+            "name": "weight_dtype"
+          },
+          "link": null
+        }
+      ],
       "outputs": [
         {
           "label": "MODEL",
@@ -702,9 +733,9 @@
         }
       ],
       "properties": {
-        "cnr_id": "comfyui-nunchaku",
+        "cnr_id": "comfy-core",
         "ver": "0.3.73",
-        "Node name for S&R": "NunchakuZImageDiTLoader",
+        "Node name for S&R": "UNETLoader",
         "enableTabs": false,
         "tabWidth": 65,
         "tabXOffset": 10,
@@ -714,8 +745,8 @@
         "secondTabWidth": 65,
         "models": [
           {
-            "name": "z_image_turbo_bf16.safetensors",
-            "url": "https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors",
+            "name": "mPMix_NSFW_V9_fp8.safetensors",
+            "url": "https://cnb.cool/bacon159-2026/model/-/lfs/96b875e4e3904555688998a07c45166322f98bb566f870b7d7e7f86cb5aecf70",
             "directory": "diffusion_models"
           }
         ],
@@ -726,9 +757,10 @@
         }
       },
       "widgets_values": [
-        "z_image_turbo_bf16.safetensors"
+        "mPMix_NSFW_V9_fp8.safetensors",
+        "default"
       ],
-      "title": "默认非NSFW主模型 - Nunchaku Z-Image Turbo"
+      "title": "默认非NSFW主模型 - mPMix稳定链路"
     },
     {
       "id": 45,
@@ -860,6 +892,83 @@
       ],
       "color": "#322",
       "bgcolor": "#533"
+    },
+    {
+      "id": 53,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        118.86893955545375,
+        1451.5441194680652
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "model",
+          "localized_name": "模型",
+          "name": "model",
+          "type": "MODEL",
+          "link": 49
+        },
+        {
+          "label": "lora_name",
+          "localized_name": "LoRA名称",
+          "name": "lora_name",
+          "type": "COMBO",
+          "widget": {
+            "name": "lora_name"
+          },
+          "link": null
+        },
+        {
+          "label": "strength_model",
+          "localized_name": "模型强度",
+          "name": "strength_model",
+          "type": "FLOAT",
+          "widget": {
+            "name": "strength_model"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "label": "MODEL",
+          "localized_name": "模型",
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            50
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.76",
+        "Node name for S&R": "LoraLoaderModelOnly",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.8"
+        },
+        "models": [
+          {
+            "name": "Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+            "url": "https://cnb.cool/ai-models/lightx2v/Qwen-Image-2512-Lightning/-/lfs/ad12117461cb41e2ea637fec8df6392ce8e8550c47fbe2b829ed3deb98262066?name=Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+            "directory": "loras"
+          }
+        ]
+      },
+      "widgets_values": [
+        "Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+        1
+      ],
+      "title": "Qwen-Image Lightning 加速 LoRA"
     }
   ],
   "links": [
@@ -928,6 +1037,30 @@
       "IMAGE"
     ],
     [
+      49,
+      51,
+      0,
+      53,
+      0,
+      "MODEL"
+    ],
+    [
+      50,
+      53,
+      0,
+      47,
+      0,
+      "MODEL"
+    ],
+    [
+      51,
+      46,
+      0,
+      51,
+      0,
+      "MODEL"
+    ],
+    [
       52,
       39,
       0,
@@ -942,14 +1075,6 @@
       44,
       2,
       "CONDITIONING"
-    ],
-    [
-      51,
-      46,
-      0,
-      47,
-      0,
-      "MODEL"
     ]
   ],
   "groups": [
@@ -1049,8 +1174,8 @@
     "workflowRendererVersion": "LG",
     "ue_links": [],
     "links_added_by_ue": [],
-    "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo)",
-    "msjh_note": "默认非 NSFW 工作流：使用 NunchakuZImageDiTLoader 加载 z_image_turbo_bf16.safetensors，配套 qwen_3_4b.safetensors、lumina2 和 ae.safetensors。适合普通头像、立绘、剧情图和客户手动测试。"
+    "workflow_name": "墨色江湖 - 默认非NSFW头像/剧情图 (mPMix稳定版)",
+    "msjh_note": "NSFW 专用工作流：mPMix_NSFW_V9_fp8.safetensors -> Qwen-Image-2512-Lightning-4steps LoRA -> AuraFlow 采样。已移除未连接且会导致缺失提示的 Qwen GGUF 备用节点，并保留 LoRA 作为主链路一环。"
   },
   "version": 0.4
 }
