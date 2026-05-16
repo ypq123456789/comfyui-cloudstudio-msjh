@@ -232,7 +232,7 @@
       name: load custom_nodes
       image: $custom_image_preset:custom_nodes
       if: |
-        [ "$custom_comfyui_image_found" != "true" ]
+        [ "$custom_comfyui_image_found" != "true" ] && [ "$ENV_MODE" != "classic" ]
       script: |
         mkdir -p /workspace/comfyui
         cp -af /custom_nodes /workspace/comfyui/
@@ -241,7 +241,7 @@
       name: load libs
       image: $custom_image_preset:libs
       if: |
-        [ "$custom_comfyui_image_found" != "true" ]
+        [ "$custom_comfyui_image_found" != "true" ] && [ "$ENV_MODE" != "classic" ]
       script: |
         mkdir -p /workspace/venv/lib/python3.12/site-packages
         cp -af /libs/. /workspace/venv/lib/python3.12/site-packages/
@@ -250,7 +250,7 @@
       name: load comfy-libs
       image: $custom_image_preset:comfy-libs
       if: |
-        [ "$custom_comfyui_image_found" != "true" ]
+        [ "$custom_comfyui_image_found" != "true" ] && [ "$ENV_MODE" != "classic" ]
       script: |
         mkdir -p /workspace/venv/lib/python3.12/site-packages
         cp -af /comfy-libs/. /workspace/venv/lib/python3.12/site-packages/
