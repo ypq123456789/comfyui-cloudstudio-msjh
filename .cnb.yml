@@ -45,6 +45,7 @@
   preset_torch_version2: 2.11.0-cu130-cp312
   CNB_WELCOME_CMD: |
     echo "ComfyUI 正在后台启动，日志见 /tmp/msjh-comfyui-start.log"
+    while [ ! -f /tmp/msjh-comfyui-start.log ]; do sleep 1; done
     tail -f /tmp/msjh-comfyui-start.log
 
 .check_vram_usage: &check_vram_usage
@@ -387,8 +388,6 @@
         [ "$tags" = "cnb:arch:amd64" -o "$vram_is_enough" = "true" ]
       script: $cnb_xu_path/script/init
       allowFailure: true
-    - name: vscode go
-      type: vscode:go
     - name: start custom init command
       script: |
         if pgrep -f "/workspace/comfyui/main.py.*--port 8188" >/dev/null 2>&1; then
@@ -400,6 +399,8 @@
         nohup bash /workspace/自定义初始化命令 > /tmp/msjh-comfyui-start.log 2>&1 &
         echo "[Startup] 已后台执行 /workspace/自定义初始化命令，日志: /tmp/msjh-comfyui-start.log"
       allowFailure: true
+    - name: vscode go
+      type: vscode:go
 
 .save: &save
   name: save
