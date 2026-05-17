@@ -453,7 +453,6 @@
       cpus: 16
   services:
     - vscode
-    - docker
   stages:
     - <<: *check_vram_usage
     - <<: *check_custom_variables
