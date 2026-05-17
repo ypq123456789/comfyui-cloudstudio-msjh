@@ -422,7 +422,7 @@ workflow = json.loads(workflow_path.read_text(encoding="utf-8"))
 js = f'''import {{ app }} from "/scripts/app.js";
 
 const MSJH_DEFAULT_WORKFLOW = {json.dumps(workflow, ensure_ascii=False)};
-const MSJH_WORKFLOW_NAME = "墨色江湖 - 默认非NSFW头像/剧情图 (mPMix稳定版)";
+const MSJH_WORKFLOW_NAME = "墨色江湖 - 默认非NSFW头像/剧情图 (Z-Image Turbo AIO + Mystic)";
 
 function graphLooksEmpty() {{
   const nodes = app.graph?._nodes || [];
