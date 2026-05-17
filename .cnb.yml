@@ -35,7 +35,7 @@
   # 以下参数不建议修改！！！
   cnb_xu_path: /workspace/.cnb-xu
   cnb_xu_docker_path: docker.cnb.cool/cnb-xu/docker
-  cnb_xu_core_image: $cnb_xu_docker_path/cnb-xu:latest
+  cnb_xu_core_image: docker.cnb.cool/bacon159-2026/comfyui-ql/cnb-xu-core:latest
   cnb_xu_mirror_prefix: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/cnb-xu-mirror
   custom_image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-${ENV_MODE}
   custom_image_module: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-module
