@@ -13,7 +13,8 @@
 SCRIPT_PY="/workspace/.cnb-xu/script_py"
 PATCH_SRC="/workspace/user/nsfw_patch"
 
-if [ -d "$SCRIPT_PY" ]; then
+if [ -d "$PATCH_SRC" ]; then
+    mkdir -p "$SCRIPT_PY"
     echo "[NSFW Patch] 正在应用 NSFW 检测禁用补丁..."
 
     # 1. 重命名原始 .so 文件（如果尚未重命名）
@@ -45,7 +46,7 @@ if [ -d "$SCRIPT_PY" ]; then
 
     echo "[NSFW Patch] 补丁应用完成！NSFW 检测已禁用。"
 else
-    echo "[NSFW Patch] 警告: $SCRIPT_PY 目录不存在，跳过补丁"
+    echo "[NSFW Patch] 警告: $PATCH_SRC 目录不存在，跳过补丁"
 fi
 
 # ============================================================
