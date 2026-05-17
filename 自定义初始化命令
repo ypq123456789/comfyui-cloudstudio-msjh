@@ -124,6 +124,10 @@ fi
 
 PYTHON_BIN="${PYTHON_BIN:-python}"
 PIP_BIN="${PIP_BIN:-pip}"
+export PIP_CACHE_DIR="${PIP_CACHE_DIR:-/workspace/.cache/pip}"
+export PIP_DISABLE_PIP_VERSION_CHECK=1
+export PIP_NO_INPUT=1
+mkdir -p "$PIP_CACHE_DIR"
 if [ -f /workspace/venv/bin/activate ]; then
     # shellcheck disable=SC1091
     source /workspace/venv/bin/activate
@@ -152,7 +156,7 @@ PY
 
 if [ -n "$MISSING_PY_DEPS" ]; then
     echo "[Dependency Fallback] 缺少 Python 依赖，正在补装: $MISSING_PY_DEPS"
-    "$PIP_BIN" install -U $MISSING_PY_DEPS
+    "$PIP_BIN" install --prefer-binary --cache-dir "$PIP_CACHE_DIR" $MISSING_PY_DEPS
 fi
 
 # ============================================================
@@ -179,8 +183,15 @@ PY
 )"
 
 if [ "$FRONTEND_UPDATE_NEEDED" = "yes" ] && [ -f /workspace/comfyui/requirements.txt ]; then
-    echo "[Frontend Update] ComfyUI frontend 版本偏低，正在同步 requirements.txt"
-    "$PIP_BIN" install -r /workspace/comfyui/requirements.txt
+    FRONTEND_REQ="/tmp/msjh-comfyui-frontend-requirements.txt"
+    grep -E '^(comfyui-frontend-package|comfyui-workflow-templates|comfyui-embedded-docs|comfyui-workflow-templates-)' /workspace/comfyui/requirements.txt > "$FRONTEND_REQ" || true
+    if [ -s "$FRONTEND_REQ" ]; then
+        echo "[Frontend Update] ComfyUI frontend version is too old; installing frontend packages only and skipping torch/CUDA"
+        "$PIP_BIN" install --prefer-binary --cache-dir "$PIP_CACHE_DIR" -r "$FRONTEND_REQ"
+    else
+        echo "[Frontend Update] frontend requirements not found; installing fixed frontend package"
+        "$PIP_BIN" install --prefer-binary --cache-dir "$PIP_CACHE_DIR" "comfyui-frontend-package==1.43.18"
+    fi
 fi
 
 # ============================================================

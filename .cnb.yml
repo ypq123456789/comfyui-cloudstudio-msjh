@@ -15,7 +15,7 @@
   auto_save_ai_toolkit: false # 自动保存 ai-toolkit 文件夹到镜像
   auto_save_comfyui: false # 自动保存 comfyui 文件夹到镜像
   auto_save_models: false # 自动保存 models 文件夹到镜像
-  auto_save_venv: false # 自动保存 venv 文件夹到镜像
+  auto_save_venv: true # 自动保存 venv 文件夹到镜像
 
   # 环境启动阶段，当云节点显存占用率超过该阈值（%），自动 kill 1 关闭当前环境~
   max_vram_usage: 100
