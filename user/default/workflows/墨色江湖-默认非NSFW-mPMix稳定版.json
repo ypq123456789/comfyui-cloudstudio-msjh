@@ -45,7 +45,7 @@
         }
       },
       "widgets_values": [
-        0
+        3
       ]
     },
     {
@@ -428,10 +428,10 @@
       "widgets_values": [
         464658567884243,
         "randomize",
-        6,
+        9,
         1,
-        "euler",
-        "simple",
+        "res_multistep",
+        "sgm_uniform",
         1
       ]
     }
