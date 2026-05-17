@@ -34,16 +34,50 @@ if ! curl -fsS --max-time 5 http://127.0.0.1:8188/ > /dev/null; then
 fi
 
 # 获取代理 URI
-BASE_URI="${CNB_VSCODE_PROXY_URI:-${VSCODE_PROXY_URI:-${PORT_FORWARDING_URI:-}}}"
-if [ -z "$BASE_URI" ]; then
-  echo "No CNB proxy URI found from environment"
-  env | grep -E "CNB|VSCODE|PORT" || true
+PORT="${CNB_IMAGE_BACKEND_PORT:-8188}"
+COMFY_URL=""
+DETECTED_FROM=""
+
+normalize_url() {
+  printf '%s' "$1" | sed 's#/*$##'
+}
+
+build_from_template() {
+  local template="$1"
+  local value
+  value="${template//\{\{port\}\}/$PORT}"
+  value="${value//\$\{port\}/$PORT}"
+  value="${value//%PORT%/$PORT}"
+  value="${value//__PORT__/$PORT}"
+  normalize_url "$value"
+}
+
+try_env_url() {
+  local key="$1"
+  local raw="${!key:-}"
+  if [ -z "$raw" ]; then
+    return 1
+  fi
+
+  COMFY_URL="$(build_from_template "$raw")"
+  DETECTED_FROM="$key"
+  return 0
+}
+
+try_env_url CNB_IMAGE_BACKEND_URL \
+  || try_env_url CNB_VSCODE_PROXY_URI \
+  || try_env_url VSCODE_PROXY_URI \
+  || try_env_url PORT_FORWARDING_URI \
+  || true
+
+if [ -z "$COMFY_URL" ]; then
+  echo "[CNB Sync] No CNB proxy URI found from environment"
+  echo "[CNB Sync] 请在 CNB 的 PORTS/端口面板打开 8188，或手动设置："
+  echo "[CNB Sync]   export CNB_IMAGE_BACKEND_URL=https://你的端口域名"
+  echo "[CNB Sync] 下面是当前可能相关的环境变量："
+  env | grep -E "CNB|VSCODE|PORT|PROXY" || true
   exit 1
 fi
-
-# 拼接 ComfyUI 访问地址
-COMFY_URL="${BASE_URI//\{\{port\}\}/8188}"
-COMFY_URL="${COMFY_URL%/}"
 
 echo "Detected ComfyUI URL: $COMFY_URL"
 echo "Auto connect identifier: $CONNECT_TOKEN"
@@ -59,11 +93,13 @@ sync_once() {
   COMFY_URL_ESCAPED="$(json_escape "$COMFY_URL")"
   CONNECT_TOKEN_ESCAPED="$(json_escape "$CONNECT_TOKEN")"
   WORKSPACE_ESCAPED="$(json_escape "${CNB_REPO_SLUG_LOWERCASE:-${CNB_REPO_SLUG:-unknown}}")"
+  DETECTED_FROM_ESCAPED="$(json_escape "$DETECTED_FROM")"
+  HEALTH_URL_ESCAPED="$(json_escape "$COMFY_URL/system_stats")"
 
   curl -fsS -X POST "$SYNC_WEBHOOK_URL" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $SYNC_WEBHOOK_TOKEN" \
-    -d "{\"customerId\":\"$CUSTOMER_ID_ESCAPED\",\"backendType\":\"comfyui\",\"url\":\"$COMFY_URL_ESCAPED\",\"source\":\"cnb\",\"workspace\":\"$WORKSPACE_ESCAPED\",\"connectToken\":\"$CONNECT_TOKEN_ESCAPED\"}"
+    -d "{\"customerId\":\"$CUSTOMER_ID_ESCAPED\",\"backendType\":\"comfyui\",\"port\":$PORT,\"url\":\"$COMFY_URL_ESCAPED\",\"healthUrl\":\"$HEALTH_URL_ESCAPED\",\"detectedFrom\":\"$DETECTED_FROM_ESCAPED\",\"source\":\"cnb\",\"workspace\":\"$WORKSPACE_ESCAPED\",\"connectToken\":\"$CONNECT_TOKEN_ESCAPED\"}"
 }
 
 # 首次上报

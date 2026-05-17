@@ -495,7 +495,7 @@ done
 if kill -0 "$COMFYUI_PID" 2>/dev/null; then
     if curl -fsS --max-time 2 http://127.0.0.1:8188/ >/dev/null 2>&1; then
         echo "[CNB Sync] Starting CNB domain report after ComfyUI is ready"
-        nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
+        ( bash /workspace/cnb_sync.sh 2>&1 | tee /tmp/cnb_sync.log ) &
     else
         echo "[Startup] Warning: ComfyUI process is running, but port 8188 was not reachable after waiting"
     fi
