@@ -144,6 +144,16 @@ checks = [
     ("pydantic_settings", "pydantic-settings~=2.0"),
     ("aiohttp", "aiohttp>=3.11.8"),
     ("yarl", "yarl>=1.18.0"),
+    ("filelock", "filelock"),
+    ("yaml", "PyYAML"),
+    ("PIL", "Pillow"),
+    ("numpy", "numpy>=1.25.0"),
+    ("safetensors", "safetensors>=0.4.2"),
+    ("tqdm", "tqdm"),
+    ("psutil", "psutil"),
+    ("requests", "requests"),
+    ("simpleeval", "simpleeval>=1.0.0"),
+    ("blake3", "blake3"),
 ]
 for module, package in checks:
     try:
