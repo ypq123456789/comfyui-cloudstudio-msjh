@@ -154,6 +154,8 @@ checks = [
     ("requests", "requests"),
     ("simpleeval", "simpleeval>=1.0.0"),
     ("blake3", "blake3"),
+    ("comfy_aimdo", "comfy-aimdo==0.3.0"),
+    ("comfy_kitchen", "comfy-kitchen>=0.2.8"),
 ]
 for module, package in checks:
     try:
@@ -330,8 +332,8 @@ download_model_if_needed() {
     fi
 }
 
-if [ -f "$CUSTOM_DOWNLOADS" ]; then
-    echo "[Model Prefetch] 正在预下载预设工作流模型..."
+run_model_prefetch() {
+    echo "[Model Prefetch] checking preset workflow models..."
     while IFS=$'\t' read -r model_path url; do
         download_model_if_needed "$model_path" "$url"
     done < <("$PYTHON_BIN" - "$CUSTOM_DOWNLOADS" <<'PY'
@@ -350,13 +352,17 @@ with open(path, "r", encoding="utf-8-sig") as fh:
         print(f"{match.group('path')}\t{match.group('url')}")
 PY
 )
-    echo "[Model Prefetch] 预设模型检查完成"
+    echo "[Model Prefetch] preset model check completed"
+}
+
+if [ -f "$CUSTOM_DOWNLOADS" ]; then
+    if [ "${MSJH_MODEL_PREFETCH_MODE:-background}" = "foreground" ]; then
+        run_model_prefetch
+    else
+        echo "[Model Prefetch] starting in background; ComfyUI startup will continue"
+        run_model_prefetch > /tmp/msjh-model-prefetch.log 2>&1 &
+    fi
 fi
-
-# ============================================================
-# 墨色江湖工作流与默认打开页 - 同步到 ComfyUI 实际用户目录并自动载入默认工作流
-# ============================================================
-
 MSJH_SOURCE_USER="/workspace/user"
 MSJH_COMFY_USER="/workspace/comfyui/user"
 MSJH_SOURCE_WORKFLOWS="$MSJH_SOURCE_USER/default/workflows"
