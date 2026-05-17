@@ -447,9 +447,7 @@ fi
 # 原有初始化命令
 # ============================================================
 
-# 启动CNB域名持续上报（后台运行）
-nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
-
+# ComfyUI 端口可用后再启动 CNB 域名持续上报
 # 安装Tencent Cloud CodeBuddy扩展
 code-server --install-extension Tencent-Cloud.coding-copilot
 
@@ -460,4 +458,30 @@ code-server --install-extension Tencent-Cloud.coding-copilot
 PYTHON_BIN="${PYTHON_BIN:-python}"
 echo "[Startup] 正在启动 ComfyUI: $PYTHON_BIN /workspace/comfyui/main.py --listen 0.0.0.0 --port 8188 --enable-cors-header \"*\""
 cd /workspace/comfyui
-exec "$PYTHON_BIN" main.py --listen 0.0.0.0 --port 8188 --enable-cors-header "*"
+"$PYTHON_BIN" main.py --listen 0.0.0.0 --port 8188 --enable-cors-header "*" &
+COMFYUI_PID="$!"
+
+echo "[Startup] Waiting for ComfyUI port 8188 to become available..."
+for i in $(seq 1 120); do
+    if ! kill -0 "$COMFYUI_PID" 2>/dev/null; then
+        echo "[Startup] ComfyUI exited before port 8188 became available"
+        wait "$COMFYUI_PID"
+        exit $?
+    fi
+    if curl -fsS --max-time 2 http://127.0.0.1:8188/ >/dev/null 2>&1; then
+        echo "[Startup] ComfyUI is ready on port 8188"
+        break
+    fi
+    sleep 2
+done
+
+if kill -0 "$COMFYUI_PID" 2>/dev/null; then
+    if curl -fsS --max-time 2 http://127.0.0.1:8188/ >/dev/null 2>&1; then
+        echo "[CNB Sync] Starting CNB domain report after ComfyUI is ready"
+        nohup bash /workspace/cnb_sync.sh > /tmp/cnb_sync.log 2>&1 &
+    else
+        echo "[Startup] Warning: ComfyUI process is running, but port 8188 was not reachable after waiting"
+    fi
+fi
+
+wait "$COMFYUI_PID"
