@@ -371,7 +371,7 @@
     },
     "Comfy.InstalledVersion": "1.42.15",
     "Comfy.TutorialCompleted": true,
-    "Comfy.Queue.History.Expanded": false,
+    "Comfy.Queue.History.Expanded": true,
     "Comfy.RightSidePanel.IsOpen": true,
     "Comfy.Minimap.Visible": true,
     "Comfy.VueNodes.Enabled": false,
