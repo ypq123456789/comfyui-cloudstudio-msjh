@@ -14,3 +14,4 @@ models/unet/Z-Image-Turbo-GGUF:https://github.com/calcuis/gguf
 models/vae/ComfyUi-ConditioningNoiseInjection:https://github.com/BigStationW/ComfyUi-ConditioningNoiseInjection
 models/detection-vitpose-l-wholebody:https://huggingface.co/JunkyByte/easy_ViTPose
 models/detection-yolov10m:https://huggingface.co/onnx-community/yolov10m
+models/clip_vision-clip_vision_h.safetensors:https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/blob/main/split_files/clip_vision/clip_vision_h.safetensors
