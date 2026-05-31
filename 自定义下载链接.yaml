@@ -10,3 +10,5 @@ models/vae/ae.safetensors: https://cnb.cool/ai-models/Comfy-Org/z_image_turbo/-/
 models/loras/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors: https://cnb.cool/ai-models/lightx2v/Qwen-Image-2512-Lightning/-/lfs/ad12117461cb41e2ea637fec8df6392ce8e8550c47fbe2b829ed3deb98262066?name=Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors
 models/checkpoints/zImageTurboBaseAIO_zImageTurboFP8AIO.safetensors: https://cnb.cool/ai-models/SeeSee21/Z-Image-Turbo-AIO/-/lfs/f569c42b6797a89e65e80c743d6dfd230ed9318237aa242c92777deb22fad660?name=z-image-turbo-fp8-aio.safetensors
 models/loras/Mystic-XXX-ZIT-v3.safetensors: https://cnb.cool/bacon159-2026/model/-/lfs/8d564de8c38132680ff4167fa8645dacd5f60cd2acdbf34fc238641383c338f0?name=Mystic-XXX-ZIT-v3.safetensors
+models/unet/Z-Image-Turbo-GGUF:https://github.com/calcuis/gguf
+models/vae/ComfyUi-ConditioningNoiseInjection:https://github.com/BigStationW/ComfyUi-ConditioningNoiseInjection
