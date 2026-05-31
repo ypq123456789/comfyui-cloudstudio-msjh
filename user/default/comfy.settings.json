@@ -373,6 +373,10 @@
     "Comfy.TutorialCompleted": true,
     "Comfy.Queue.History.Expanded": true,
     "Comfy.RightSidePanel.IsOpen": true,
-    "Comfy.Minimap.Visible": false,
-    "Comfy.VueNodes.Enabled": false
+    "Comfy.Minimap.Visible": true,
+    "Comfy.VueNodes.Enabled": false,
+    "Comfy.WorkflowActions.SeenItems": [
+        "enter-app-mode",
+        "enter-builder-mode"
+    ]
 }
