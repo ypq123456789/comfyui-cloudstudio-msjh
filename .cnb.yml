@@ -35,14 +35,14 @@
   # 以下参数不建议修改！！！
   cnb_xu_path: /workspace/.cnb-xu
   cnb_xu_docker_path: docker.cnb.cool/cnb-xu/docker
-  cnb_xu_core_image: docker.cnb.cool/bacon159-2026/comfyui-ql/cnb-xu-core:latest
+  cnb_xu_core_image: docker.cnb.cool/cnb-xu/docker/cnb-xu:latest
   cnb_xu_mirror_prefix: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/cnb-xu-mirror
   custom_image: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-${ENV_MODE}
   custom_image_module: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}/${CNB_BRANCH}-module
   custom_image_preset: $cnb_xu_docker_path/comfyui-${ENV_MODE}
-  custom_torch_version: 2.9.1-cu130-cp312
-  preset_torch_version1: 2.9.1-cu130-cp312
-  preset_torch_version2: 2.11.0-cu130-cp312
+  custom_torch_version: 2.9.1-cu130
+  preset_torch_version1: 2.9.1-cu130
+  preset_torch_version2: 2.11.0-cu130
   CNB_WELCOME_CMD: |
     echo "ComfyUI 正在启动，日志同步写入 /tmp/msjh-comfyui-start.log"
     bash /workspace/自定义初始化命令 2>&1 | tee /tmp/msjh-comfyui-start.log
@@ -87,9 +87,9 @@
       name: set sageattention_image
       script: |
         if [ "$tags" = "cnb:arch:amd64:gpu:H20" ]; then
-          echo "$cnb_xu_docker_path/site-packages:sageattention-cu130-cp312-for-h20"
+          echo "$cnb_xu_docker_path/python3.12-libs:sageattention-h20"
         else
-          echo "$cnb_xu_docker_path/site-packages:sageattention-cu130-cp312-for-l40"
+          echo "$cnb_xu_docker_path/python3.12-libs:sageattention-l40"
         fi
       exports:
         stdout: sageattention_image
@@ -99,21 +99,25 @@
       image: $cnb_xu_core_image
       script: |
         mkdir -p $cnb_xu_path
-        cp -af /cnb-xu/. $cnb_xu_path/
+        for source in /O.o-AI /cnb-xu; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. $cnb_xu_path/
+          fi
+        done
       allowFailure: true
     job4:
-      name: load cnb-xu_python3.12
-      image: $cnb_xu_docker_path/cnb-xu:python3.12
+      name: load cnb-xu_local node
+      image: $cnb_xu_docker_path/local:node
       script: |
-        mkdir -p $cnb_xu_path/python3.12
-        cp -af /python3.12/. $cnb_xu_path/python3.12/
+        mkdir -p $cnb_xu_path/local/node
+        cp -af /O.o-AI/. $cnb_xu_path/local/node/
       allowFailure: true
     job5:
       name: load cnb-xu_coscmd
-      image: $cnb_xu_docker_path/site-packages:coscmd
+      image: $cnb_xu_docker_path/python3.12-libs:coscmd
       script: |
         mkdir -p $cnb_xu_path/python3.12-libs/coscmd
-        cp -af /coscmd/. $cnb_xu_path/python3.12-libs/coscmd/
+        cp -af /O.o-AI/. $cnb_xu_path/python3.12-libs/coscmd/
       allowFailure: true
 
 .check_custom_image: &check_custom_image
@@ -162,8 +166,12 @@
         [ "$custom_comfyui_image_found" = "true" ] && [ "$ENV_MODE" = "classic" ]
       script: |
         mkdir -p /workspace/comfyui
-        rm -rf /comfyui/custom_nodes
-        cp -af /comfyui/. /workspace/comfyui/
+        for source in /O.o-AI /comfyui; do
+          if [ -d "$source" ]; then
+            rm -rf "$source/custom_nodes"
+            cp -af "$source"/. /workspace/comfyui/
+          fi
+        done
       allowFailure: true
     load_custom_image 1:
       name: load comfyui
@@ -172,11 +180,17 @@
         [ "$custom_comfyui_image_found" = "true" ]
       script: |
         mkdir -p /workspace/comfyui
-        if [ "$ENV_MODE" = "classic" ]; then
-          cp -af /comfyui/custom_nodes /workspace/comfyui/
-        else
-          cp -af /comfyui/. /workspace/comfyui/
-        fi
+        for source in /O.o-AI /comfyui; do
+          if [ -d "$source" ]; then
+            if [ "$ENV_MODE" = "classic" ]; then
+              if [ -d "$source/custom_nodes" ]; then
+                cp -af "$source/custom_nodes" /workspace/comfyui/
+              fi
+            else
+              cp -af "$source"/. /workspace/comfyui/
+            fi
+          fi
+        done
       allowFailure: true
     load_custom_image 2:
       name: load custom_nodes
@@ -184,8 +198,12 @@
       if: |
         [ "$custom_comfyui_image_found" = "true" ]
       script: |
-        mkdir -p /workspace/comfyui
-        cp -af /custom_nodes /workspace/comfyui/
+        mkdir -p /workspace/comfyui/custom_nodes
+        for source in /O.o-AI /custom_nodes; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/comfyui/custom_nodes/
+          fi
+        done
       allowFailure: true
     load_custom_image 3:
       name: load libs
@@ -194,7 +212,11 @@
         [ "$custom_comfyui_image_found" = "true" ]
       script: |
         mkdir -p /workspace/venv/lib/python3.12/site-packages
-        cp -af /libs/. /workspace/venv/lib/python3.12/site-packages/
+        for source in /O.o-AI /libs; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv/lib/python3.12/site-packages/
+          fi
+        done
       allowFailure: true
     load_custom_image 4:
       name: load comfy-libs
@@ -203,7 +225,11 @@
         [ "$custom_comfyui_image_found" = "true" ]
       script: |
         mkdir -p /workspace/venv/lib/python3.12/site-packages
-        cp -af /comfy-libs/. /workspace/venv/lib/python3.12/site-packages/
+        for source in /O.o-AI /comfy-libs; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv/lib/python3.12/site-packages/
+          fi
+        done
       allowFailure: true
     load_custom_image 5:
       name: load venv
@@ -212,14 +238,24 @@
         [ "$custom_venv_image_found" = "true" ]
       script: |
         mkdir -p /workspace/venv
-        cp -af /venv/. /workspace/venv/
+        for source in /O.o-AI /venv; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv/
+          fi
+        done
       allowFailure: true
     load_custom_image 6:
       name: load models
       image: $custom_image:models
       if: |
         [ "$custom_models_image_found" = "true" ]
-      script: cp -af /models /workspace/
+      script: |
+        mkdir -p /workspace/models
+        for source in /O.o-AI /models; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/models/
+          fi
+        done
       allowFailure: true
     load_preset_image 1:
       name: load comfyui
@@ -228,7 +264,11 @@
         [ "$custom_comfyui_image_found" != "true" ]
       script: |
         mkdir -p /workspace/comfyui
-        cp -af /comfyui/. /workspace/comfyui/
+        for source in /O.o-AI /comfyui; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/comfyui/
+          fi
+        done
       allowFailure: true
     load_preset_image 2:
       name: load custom_nodes
@@ -236,8 +276,12 @@
       if: |
         [ "$custom_comfyui_image_found" != "true" ] && [ "$ENV_MODE" != "classic" ]
       script: |
-        mkdir -p /workspace/comfyui
-        cp -af /custom_nodes /workspace/comfyui/
+        mkdir -p /workspace/comfyui/custom_nodes
+        for source in /O.o-AI /custom_nodes; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/comfyui/custom_nodes/
+          fi
+        done
       allowFailure: true
     load_preset_image 3:
       name: load libs
@@ -246,7 +290,11 @@
         [ "$custom_comfyui_image_found" != "true" ] && [ "$ENV_MODE" != "classic" ]
       script: |
         mkdir -p /workspace/venv/lib/python3.12/site-packages
-        cp -af /libs/. /workspace/venv/lib/python3.12/site-packages/
+        for source in /O.o-AI /libs; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv/lib/python3.12/site-packages/
+          fi
+        done
       allowFailure: true
     load_preset_image 4:
       name: load comfy-libs
@@ -255,7 +303,11 @@
         [ "$custom_comfyui_image_found" != "true" ] && [ "$ENV_MODE" != "classic" ]
       script: |
         mkdir -p /workspace/venv/lib/python3.12/site-packages
-        cp -af /comfy-libs/. /workspace/venv/lib/python3.12/site-packages/
+        for source in /O.o-AI /comfy-libs; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv/lib/python3.12/site-packages/
+          fi
+        done
       allowFailure: true
     load_preset_image 5:
       name: load venv
@@ -264,7 +316,11 @@
         [ "$custom_venv_image_found" != "true" ]
       script: |
         mkdir -p /workspace/venv
-        cp -af /venv/. /workspace/venv/
+        for source in /O.o-AI /venv; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv/
+          fi
+        done
       allowFailure: true
     load_preset_nodes:
       name: load preset nodes
@@ -273,7 +329,11 @@
         [ "$ENV_MODE" = "classic" ]
       script: |
         mkdir -p /workspace/custom_nodes_preset
-        cp -af /custom_nodes/. /workspace/custom_nodes_preset/
+        for source in /O.o-AI /custom_nodes; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/custom_nodes_preset/
+          fi
+        done
       allowFailure: true
     load_preset_libs 1:
       name: load preset libs
@@ -282,7 +342,11 @@
         [ "$ENV_MODE" = "classic" ]
       script: |
         mkdir -p /workspace/venv_preset_libs
-        cp -af /libs/. /workspace/venv_preset_libs/
+        for source in /O.o-AI /libs; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv_preset_libs/
+          fi
+        done
       allowFailure: true
     load_preset_libs 2:
       name: load preset libs
@@ -291,79 +355,113 @@
         [ "$ENV_MODE" = "classic" ]
       script: |
         mkdir -p /workspace/venv_preset_libs
-        cp -af /comfy-libs/. /workspace/venv_preset_libs/
+        for source in /O.o-AI /comfy-libs; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/venv_preset_libs/
+          fi
+        done
       allowFailure: true
     load_cnb-xu_cuda-12.8:
       name: load cnb-xu cuda-12.8
       if: |
          [ ! -d "/usr/local/cuda-12.8" ]
-      image: $cnb_xu_docker_path/cuda:12.8.1-libs
+      image: $cnb_xu_docker_path/cuda:12.8.1-zh-hans-vscode
       script: |
-        mkdir -p $cnb_xu_path/local
-        cp -af /cuda-12.8 $cnb_xu_path/local/
+        mkdir -p $cnb_xu_path/local/cuda-12.8
+        cp -af /usr/local/cuda-12.8/. $cnb_xu_path/local/cuda-12.8/
       allowFailure: true
     load_cnb-xu_local:
-      name: load cnb-xu local
-      image: $cnb_xu_docker_path/cnb-xu:local
+      name: load cnb-xu local lib
+      image: $cnb_xu_docker_path/local:lib
       script: |
-        mkdir -p $cnb_xu_path/local
-        cp -af /local/. $cnb_xu_path/local/
+        mkdir -p $cnb_xu_path/local/lib
+        cp -af /O.o-AI/. $cnb_xu_path/local/lib/
+      allowFailure: true
+    load_cnb-xu_local_ffmpeg:
+      name: load cnb-xu local ffmpeg
+      image: $cnb_xu_docker_path/local:ffmpeg
+      script: |
+        mkdir -p $cnb_xu_path/local/ffmpeg
+        cp -af /O.o-AI/. $cnb_xu_path/local/ffmpeg/
+      allowFailure: true
+    load_cnb-xu_local_node:
+      name: load cnb-xu local node
+      image: $cnb_xu_docker_path/local:node
+      script: |
+        mkdir -p $cnb_xu_path/local/node
+        cp -af /O.o-AI/. $cnb_xu_path/local/node/
       allowFailure: true
     load_cnb-xu_sageattention:
       name: load cnb-xu sageattention
       image: $sageattention_image
       script: |
         mkdir -p $cnb_xu_path/python3.12-libs/sageattention
-        cp -af /sageattention/. $cnb_xu_path/python3.12-libs/sageattention/
+        cp -af /O.o-AI/. $cnb_xu_path/python3.12-libs/sageattention/
       allowFailure: true
     load_cnb-xu_torch 1:
       name: load cnb-xu torch
-      image: $cnb_xu_docker_path/site-packages:torch-$preset_torch_version1
+      image: $cnb_xu_docker_path/python3.12-libs:torch-$preset_torch_version1
       script: |
         mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1
-        cp -af /site-packages/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1/
+        cp -af /O.o-AI/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1/
       allowFailure: true
     load_cnb-xu_nunchaku 1:
       name: load cnb-xu nunchaku
-      image: $cnb_xu_docker_path/site-packages:nunchaku-for-torch-$preset_torch_version1
+      image: $cnb_xu_docker_path/python3.12-libs:nunchaku-for-torch-$preset_torch_version1
       script: |
         mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1
-        cp -af /nunchaku/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1/
+        cp -af /O.o-AI/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version1/
       allowFailure: true
     load_cnb-xu_torch 2:
       name: load cnb-xu torch
-      image: $cnb_xu_docker_path/site-packages:torch-$preset_torch_version2
+      image: $cnb_xu_docker_path/python3.12-libs:torch-$preset_torch_version2
       script: |
         mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2
-        cp -af /site-packages/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2/
+        cp -af /O.o-AI/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2/
       allowFailure: true
     load_cnb-xu_nunchaku 2:
       name: load cnb-xu nunchaku
-      image: $cnb_xu_docker_path/site-packages:nunchaku-for-torch-$preset_torch_version2
+      image: $cnb_xu_docker_path/python3.12-libs:nunchaku-for-torch-$preset_torch_version2
       script: |
         mkdir -p $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2
-        cp -af /nunchaku/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2/
+        cp -af /O.o-AI/. $cnb_xu_path/python3.12-libs/torch-$preset_torch_version2/
       allowFailure: true
     load_preset_module_image 1:
       name: load cnb-xu ai-toolkit
       image: $cnb_xu_docker_path/module:ai-toolkit
       if: |
         [ "$custom_ai_toolkit_image_found" != "true" ]
-      script: cp -af /ai-toolkit /workspace/
+      script: |
+        mkdir -p /workspace/ai-toolkit
+        for source in /O.o-AI /ai-toolkit; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/ai-toolkit/
+          fi
+        done
       allowFailure: true
     load_custom_module_image 1:
       name: load custom ai-toolkit
       image: $custom_image_module:ai-toolkit
       if: |
         [ "$custom_ai_toolkit_image_found" = "true" ]
-      script: cp -af /ai-toolkit /workspace/
+      script: |
+        mkdir -p /workspace/ai-toolkit
+        for source in /O.o-AI /ai-toolkit; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. /workspace/ai-toolkit/
+          fi
+        done
       allowFailure: true
     load_preset_module_image 2:
       name: load cnb-xu ollama
       image: $cnb_xu_docker_path/module:ollama
       script: |
-        mkdir -p $cnb_xu_path/local
-        cp -af /ollama $cnb_xu_path/local/
+        mkdir -p $cnb_xu_path/local/ollama
+        for source in /O.o-AI /ollama; do
+          if [ -d "$source" ]; then
+            cp -af "$source"/. $cnb_xu_path/local/ollama/
+          fi
+        done
       allowFailure: true
     update_cnb-welcome:
       name: update cnb-welcome

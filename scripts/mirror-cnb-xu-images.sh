@@ -30,14 +30,17 @@ mirror_image() {
 }
 
 mirror_image "cnb-xu" "latest"
-mirror_image "cnb-xu" "python3.12"
-mirror_image "cnb-xu" "local"
 mirror_image "cuda" "13.0.2-zh-hans-vscode"
-mirror_image "cuda" "12.8.1-libs"
-mirror_image "site-packages" "coscmd"
-mirror_image "site-packages" "sageattention-cu130-cp312-for-l40"
-mirror_image "site-packages" "torch-2.9.1-cu130-cp312"
-mirror_image "site-packages" "nunchaku-for-torch-2.9.1-cu130-cp312"
+mirror_image "cuda" "12.8.1-zh-hans-vscode"
+mirror_image "local" "ffmpeg"
+mirror_image "local" "lib"
+mirror_image "local" "node"
+mirror_image "python3.12-libs" "coscmd"
+mirror_image "python3.12-libs" "sageattention-l40"
+mirror_image "python3.12-libs" "torch-2.9.1-cu130"
+mirror_image "python3.12-libs" "nunchaku-for-torch-2.9.1-cu130"
+mirror_image "python3.12-libs" "torch-2.11.0-cu130"
+mirror_image "python3.12-libs" "nunchaku-for-torch-2.11.0-cu130"
 mirror_image "comfyui-classic" "comfyui"
 mirror_image "comfyui-classic" "custom_nodes" optional
 mirror_image "comfyui-classic" "libs" optional
