@@ -6,7 +6,8 @@ set -e
 
 SYNC_WEBHOOK_URL="${MSJH_IMAGE_BACKEND_SYNC_URL:-https://msjh.bacon.de5.net/api/image-backend/sync}"
 SYNC_WEBHOOK_TOKEN="${MSJH_IMAGE_BACKEND_SYNC_TOKEN:-msjh_cnb_sync_2026_bacon_only}"
-SYNC_CUSTOMER_ID="${CLOUDSTUDIO_CUSTOMER_ID:-${CLOUDSTUDIO_WORKSPACE_ID:-${HOSTNAME:-cloudstudio}}}"
+HOST_ID="${CLOUDSTUDIO_WORKSPACE_ID:-${HOSTNAME:-$(hostname 2>/dev/null || true)}}"
+SYNC_CUSTOMER_ID="${CLOUDSTUDIO_CUSTOMER_ID:-${HOST_ID:-cloudstudio}}"
 CONNECT_TOKEN="${CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN:-${MSJH_IMAGE_BACKEND_CONNECT_TOKEN:-${CLOUDSTUDIO_USER_NAME:-${USER:-cloudstudio}}}}"
 PORT="${CLOUDSTUDIO_IMAGE_BACKEND_PORT:-8188}"
 COMFY_URL=""
@@ -38,6 +39,17 @@ try_env_url() {
   return 0
 }
 
+try_cloudstudio_preview_url() {
+  local domain="${X_IDE_PREVIEW_DOMAIN:-${CLOUDSTUDIO_PREVIEW_DOMAIN:-}}"
+  local host="${HOST_ID:-$(hostname 2>/dev/null || true)}"
+  if [ -z "$domain" ] || [ -z "$host" ]; then
+    return 1
+  fi
+  COMFY_URL="$(normalize_url "https://${host}--${PORT}.${domain}")"
+  DETECTED_FROM="X_IDE_PREVIEW_DOMAIN+HOSTNAME"
+  return 0
+}
+
 wait_for_comfyui() {
   for _ in $(seq 1 180); do
     if curl -fsS --max-time 5 "http://127.0.0.1:${PORT}/" >/dev/null 2>&1; then
@@ -57,6 +69,7 @@ discover_public_url() {
     || try_env_url VSCODE_PROXY_URI \
     || try_env_url PORT_FORWARDING_URI \
     || try_env_url GITPOD_WORKSPACE_URL \
+    || try_cloudstudio_preview_url \
     || true
 
   if [ -n "$COMFY_URL" ]; then
@@ -66,6 +79,8 @@ discover_public_url() {
   echo "[Cloud Studio Sync] No public ComfyUI URL found from environment."
   echo "[Cloud Studio Sync] Open Cloud Studio's port/preview panel for ${PORT}, then set:"
   echo "[Cloud Studio Sync]   export CLOUDSTUDIO_IMAGE_BACKEND_URL=https://your-preview-url"
+  echo "[Cloud Studio Sync] To identify your own backend in MoRanJiangHu, set:"
+  echo "[Cloud Studio Sync]   export CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN=your-private-short-code"
   echo "[Cloud Studio Sync] Relevant environment variables:"
   env | grep -E "CLOUDSTUDIO|VSCODE|PORT|PROXY|PREVIEW|FORWARD" || true
   return 1

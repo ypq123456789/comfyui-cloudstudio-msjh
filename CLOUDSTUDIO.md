@@ -10,6 +10,12 @@
 
 ## 启动方式
 
+建议先设置一个只给自己用的自动连接口令。墨色江湖设置页填同一个口令时，就能只筛出自己的 Cloud Studio 后端：
+
+```bash
+export CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN="你的名字或随机短码"
+```
+
 本仓库按 Cloud Studio 文档提供了 `.vscode/preview.yml`：
 
 - `run: bash cloudstudio_start.sh`
@@ -45,3 +51,14 @@ bash cloudstudio_sync.sh
 ```
 
 5. 回到墨色江湖设置页，刷新“云端 ComfyUI 后端”，应能看到 `cloudstudio` 来源。
+
+## 上报身份字段
+
+上报 payload 会包含：
+
+- `provider/source: "cloudstudio"`：标记来源。
+- `customerId`：优先用 `CLOUDSTUDIO_CUSTOMER_ID`，否则用 `CLOUDSTUDIO_WORKSPACE_ID`、`HOSTNAME` 或 `hostname`。
+- `workspace`：优先用 `CLOUDSTUDIO_WORKSPACE_NAME` / `CLOUDSTUDIO_WORKSPACE_ID`。
+- `connectToken`：优先用 `CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN`。服务端只保存哈希，设置页输入同一个口令才能匹配到。
+
+Cloud Studio 默认系统用户常常是 `root`，所以不要依赖 `USER` 来区分用户；推荐显式设置 `CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN`。
