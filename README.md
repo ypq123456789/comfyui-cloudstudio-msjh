@@ -27,13 +27,15 @@ bash cloudstudio_sync.sh
 
 更完整的 Cloud Studio 导入、T4 算力、VS Code 布局与验收步骤见 [CLOUDSTUDIO.md](CLOUDSTUDIO.md)。
 
-建议在启动前设置自己的自动连接口令：
+脚本会自动用 Cloud Studio 工作区 ID / hostname 生成每个工作区不同的自动连接口令，并打印到终端。墨色江湖设置页填写同一个口令后，会只显示匹配的 Cloud Studio 后端。
+
+如果想使用更好记的口令，也可以在启动前设置：
 
 ```bash
 export CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN="你的名字或随机短码"
 ```
 
-墨色江湖设置页填写同一个口令后，会只显示匹配的 Cloud Studio 后端。不要依赖 Cloud Studio 默认 `USER=root` 来区分用户。
+不要依赖 Cloud Studio 默认 `USER=root` 来区分用户。
 
 ### 环境变量
 

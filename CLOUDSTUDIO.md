@@ -10,7 +10,9 @@
 
 ## 启动方式
 
-建议先设置一个只给自己用的自动连接口令。墨色江湖设置页填同一个口令时，就能只筛出自己的 Cloud Studio 后端：
+默认情况下，脚本会用 Cloud Studio 工作区 ID / hostname 自动生成每个工作区不同的自动连接口令，并在终端打印出来。墨色江湖设置页填这个口令时，就能只筛出自己的 Cloud Studio 后端。
+
+如果你想使用更好记的口令，也可以在启动前手动设置：
 
 ```bash
 export CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN="你的名字或随机短码"
@@ -59,6 +61,6 @@ bash cloudstudio_sync.sh
 - `provider/source: "cloudstudio"`：标记来源。
 - `customerId`：优先用 `CLOUDSTUDIO_CUSTOMER_ID`，否则用 `CLOUDSTUDIO_WORKSPACE_ID`、`HOSTNAME` 或 `hostname`。
 - `workspace`：优先用 `CLOUDSTUDIO_WORKSPACE_NAME` / `CLOUDSTUDIO_WORKSPACE_ID`。
-- `connectToken`：优先用 `CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN`。服务端只保存哈希，设置页输入同一个口令才能匹配到。
+- `connectToken`：优先用 `CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN`；未设置时自动使用 Cloud Studio 工作区 ID / hostname。服务端只保存哈希，设置页输入同一个口令才能匹配到。
 
-Cloud Studio 默认系统用户常常是 `root`，所以不要依赖 `USER` 来区分用户；推荐显式设置 `CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN`。
+Cloud Studio 默认系统用户常常是 `root`，所以不要依赖 `USER` 来区分用户。每个复刻工作区应使用自动打印的连接口令，或显式设置自己的 `CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN`。

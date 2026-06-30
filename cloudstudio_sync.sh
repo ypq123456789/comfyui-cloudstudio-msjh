@@ -8,7 +8,19 @@ SYNC_WEBHOOK_URL="${MSJH_IMAGE_BACKEND_SYNC_URL:-https://msjh.bacon.de5.net/api/
 SYNC_WEBHOOK_TOKEN="${MSJH_IMAGE_BACKEND_SYNC_TOKEN:-msjh_cnb_sync_2026_bacon_only}"
 HOST_ID="${CLOUDSTUDIO_WORKSPACE_ID:-${HOSTNAME:-$(hostname 2>/dev/null || true)}}"
 SYNC_CUSTOMER_ID="${CLOUDSTUDIO_CUSTOMER_ID:-${HOST_ID:-cloudstudio}}"
-CONNECT_TOKEN="${CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN:-${MSJH_IMAGE_BACKEND_CONNECT_TOKEN:-${CLOUDSTUDIO_USER_NAME:-${USER:-cloudstudio}}}}"
+if [ -n "${CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN:-}" ]; then
+  CONNECT_TOKEN="$CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN"
+  CONNECT_TOKEN_SOURCE="CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN"
+elif [ -n "${MSJH_IMAGE_BACKEND_CONNECT_TOKEN:-}" ]; then
+  CONNECT_TOKEN="$MSJH_IMAGE_BACKEND_CONNECT_TOKEN"
+  CONNECT_TOKEN_SOURCE="MSJH_IMAGE_BACKEND_CONNECT_TOKEN"
+elif [ -n "${HOST_ID:-}" ]; then
+  CONNECT_TOKEN="$HOST_ID"
+  CONNECT_TOKEN_SOURCE="cloudstudio-workspace-id"
+else
+  CONNECT_TOKEN="cloudstudio-$(date +%s)"
+  CONNECT_TOKEN_SOURCE="generated-runtime-id"
+fi
 PORT="${CLOUDSTUDIO_IMAGE_BACKEND_PORT:-8188}"
 COMFY_URL=""
 DETECTED_FROM=""
@@ -110,7 +122,9 @@ discover_public_url
 
 echo "[Cloud Studio Sync] Detected ComfyUI URL: $COMFY_URL"
 echo "[Cloud Studio Sync] Detected from: $DETECTED_FROM"
-echo "[Cloud Studio Sync] Auto connect identifier is configured; value will not be printed."
+echo "[Cloud Studio Sync] Auto connect token source: $CONNECT_TOKEN_SOURCE"
+echo "[Cloud Studio Sync] Copy this auto connect token into MoRanJiangHu settings:"
+echo "[Cloud Studio Sync]   $CONNECT_TOKEN"
 
 sync_once && echo "[Cloud Studio Sync] initial sync ok"
 
