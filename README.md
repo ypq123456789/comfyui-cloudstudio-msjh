@@ -27,7 +27,7 @@ bash cloudstudio_sync.sh
 
 更完整的 Cloud Studio 导入、T4 算力、VS Code 布局与验收步骤见 [CLOUDSTUDIO.md](CLOUDSTUDIO.md)。
 
-脚本会自动用 Cloud Studio 工作区 ID / hostname 生成每个工作区不同的自动连接口令，并打印到终端。墨色江湖设置页填写同一个口令后，会只显示匹配的 Cloud Studio 后端。
+脚本会自动用 Cloud Studio 的 `ACC_USER_ID` 生成每个账号不同的自动连接口令，并打印到终端。墨色江湖设置页填写同一个口令后，会只显示匹配的 Cloud Studio 后端。预览地址会优先用 `CLOUDSTUDIO_IMAGE_BACKEND_URL`，未设置时由 `X_IDE_SPACE_KEY` + `X_IDE_PREVIEW_DOMAIN` 自动拼接。
 
 如果想使用更好记的口令，也可以在启动前设置：
 

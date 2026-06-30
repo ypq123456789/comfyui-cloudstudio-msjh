@@ -6,17 +6,22 @@ set -e
 
 SYNC_WEBHOOK_URL="${MSJH_IMAGE_BACKEND_SYNC_URL:-https://msjh.bacon.de5.net/api/image-backend/sync}"
 SYNC_WEBHOOK_TOKEN="${MSJH_IMAGE_BACKEND_SYNC_TOKEN:-msjh_cnb_sync_2026_bacon_only}"
-HOST_ID="${CLOUDSTUDIO_WORKSPACE_ID:-${HOSTNAME:-$(hostname 2>/dev/null || true)}}"
-SYNC_CUSTOMER_ID="${CLOUDSTUDIO_CUSTOMER_ID:-${HOST_ID:-cloudstudio}}"
+SPACE_ID="${X_IDE_SPACE_KEY:-${CLOUDSTUDIO_WORKSPACE_ID:-${HOSTNAME:-$(hostname 2>/dev/null || true)}}}"
+USER_ID="${ACC_USER_ID:-${CLOUDSTUDIO_USER_ID:-}}"
+USER_LABEL="${ACC_USER_NICKNAME:-${CLOUDSTUDIO_USER_NAME:-}}"
+SYNC_CUSTOMER_ID="${CLOUDSTUDIO_CUSTOMER_ID:-${USER_ID:-${SPACE_ID:-cloudstudio}}}"
 if [ -n "${CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN:-}" ]; then
   CONNECT_TOKEN="$CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN"
   CONNECT_TOKEN_SOURCE="CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN"
 elif [ -n "${MSJH_IMAGE_BACKEND_CONNECT_TOKEN:-}" ]; then
   CONNECT_TOKEN="$MSJH_IMAGE_BACKEND_CONNECT_TOKEN"
   CONNECT_TOKEN_SOURCE="MSJH_IMAGE_BACKEND_CONNECT_TOKEN"
-elif [ -n "${HOST_ID:-}" ]; then
-  CONNECT_TOKEN="$HOST_ID"
-  CONNECT_TOKEN_SOURCE="cloudstudio-workspace-id"
+elif [ -n "${USER_ID:-}" ]; then
+  CONNECT_TOKEN="$USER_ID"
+  CONNECT_TOKEN_SOURCE="ACC_USER_ID"
+elif [ -n "${SPACE_ID:-}" ]; then
+  CONNECT_TOKEN="$SPACE_ID"
+  CONNECT_TOKEN_SOURCE="X_IDE_SPACE_KEY"
 else
   CONNECT_TOKEN="cloudstudio-$(date +%s)"
   CONNECT_TOKEN_SOURCE="generated-runtime-id"
@@ -53,12 +58,12 @@ try_env_url() {
 
 try_cloudstudio_preview_url() {
   local domain="${X_IDE_PREVIEW_DOMAIN:-${CLOUDSTUDIO_PREVIEW_DOMAIN:-}}"
-  local host="${HOST_ID:-$(hostname 2>/dev/null || true)}"
+  local host="${SPACE_ID:-$(hostname 2>/dev/null || true)}"
   if [ -z "$domain" ] || [ -z "$host" ]; then
     return 1
   fi
   COMFY_URL="$(normalize_url "https://${host}--${PORT}.${domain}")"
-  DETECTED_FROM="X_IDE_PREVIEW_DOMAIN+HOSTNAME"
+  DETECTED_FROM="X_IDE_PREVIEW_DOMAIN+X_IDE_SPACE_KEY"
   return 0
 }
 
@@ -107,7 +112,7 @@ sync_once() {
   customer_id_escaped="$(json_escape "$SYNC_CUSTOMER_ID")"
   url_escaped="$(json_escape "$COMFY_URL")"
   connect_token_escaped="$(json_escape "$CONNECT_TOKEN")"
-  workspace_escaped="$(json_escape "${CLOUDSTUDIO_WORKSPACE_NAME:-${CLOUDSTUDIO_WORKSPACE_ID:-cloudstudio}}")"
+  workspace_escaped="$(json_escape "${CLOUDSTUDIO_WORKSPACE_NAME:-${USER_LABEL:-${SPACE_ID:-cloudstudio}}}")"
   detected_from_escaped="$(json_escape "$DETECTED_FROM")"
   health_url_escaped="$(json_escape "$COMFY_URL/system_stats")"
 
