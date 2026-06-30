@@ -267,6 +267,48 @@ extract_expected_sha256() {
     printf '%s' "$url" | grep -Eo '/lfs/[a-fA-F0-9]{64}' | head -n 1 | sed 's#^/lfs/##' | tr 'A-F' 'a-f'
 }
 
+is_safetensors_file_valid() {
+    local file="$1"
+    local pybin="${PYTHON_BIN:-python}"
+    if ! command -v "$pybin" >/dev/null 2>&1; then
+        pybin="python3"
+    fi
+    "$pybin" - "$file" <<'PY'
+import json
+import struct
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+try:
+    size = path.stat().st_size
+    if size < 10:
+        raise ValueError("file too small")
+    with path.open("rb") as fh:
+        header_len = struct.unpack("<Q", fh.read(8))[0]
+        if header_len <= 0 or header_len > size - 8:
+            raise ValueError("invalid header length")
+        header = json.loads(fh.read(header_len).decode("utf-8"))
+    data_size = size - 8 - header_len
+    for name, info in header.items():
+        if name == "__metadata__":
+            continue
+        offsets = info.get("data_offsets") if isinstance(info, dict) else None
+        if (
+            not isinstance(offsets, list)
+            or len(offsets) != 2
+            or not all(isinstance(value, int) for value in offsets)
+            or offsets[0] < 0
+            or offsets[1] < offsets[0]
+            or offsets[1] > data_size
+        ):
+            raise ValueError(f"invalid tensor offsets: {name}")
+except Exception as exc:
+    print(f"[Model Prefetch] safetensors 结构校验失败: {path}: {exc}", file=sys.stderr)
+    sys.exit(1)
+PY
+}
+
 model_file_matches_expected_sha() {
     local file="$1"
     local expected_sha="$2"
@@ -286,7 +328,18 @@ model_file_matches_expected_sha() {
     fi
 
     actual_sha="$(sha256sum "$file" | awk '{print tolower($1)}')"
-    [ "$actual_sha" = "$expected_sha" ]
+    if [ "$actual_sha" != "$expected_sha" ]; then
+        return 1
+    fi
+
+    case "$file" in
+        *.safetensors)
+            is_safetensors_file_valid "$file"
+            ;;
+        *)
+            return 0
+            ;;
+    esac
 }
 
 is_model_ready() {
@@ -419,7 +472,7 @@ PY
 }
 
 if [ -f "$CUSTOM_DOWNLOADS" ]; then
-    if [ "${MSJH_MODEL_PREFETCH_MODE:-background}" = "foreground" ]; then
+    if [ "${MSJH_MODEL_PREFETCH_MODE:-foreground}" = "foreground" ]; then
         run_model_prefetch
     else
         echo "[Model Prefetch] starting in background; ComfyUI startup will continue"

@@ -66,8 +66,27 @@ assert_failure "corrupt cached model must not be treated as ready" is_model_read
 printf 'download in progress' > "$cache.part"
 assert_failure ".part download must not be treated as ready" is_model_ready "$target" "$cache.part" "$expected_sha"
 
-printf 'hello world' > "$cache"
-good_sha="$(sha256sum "$cache" | awk '{print $1}')"
-assert_success "matching cached model should be ready" is_model_ready "$target" "$cache" "$good_sha"
+plain_rel_path="auxiliary/plain-model.bin"
+plain_cache="$MODEL_CACHE_DIR/$plain_rel_path"
+plain_target="$MODEL_LINK_DIR/$plain_rel_path"
+mkdir -p "$(dirname "$plain_cache")" "$(dirname "$plain_target")"
+printf 'hello world' > "$plain_cache"
+ln -s "$plain_cache" "$plain_target"
+good_sha="$(sha256sum "$plain_cache" | awk '{print $1}')"
+assert_success "matching non-safetensors cached model should be ready" is_model_ready "$plain_target" "$plain_cache" "$good_sha"
+
+malformed_rel_path="diffusion_models/malformed.safetensors"
+malformed_cache="$MODEL_CACHE_DIR/$malformed_rel_path"
+malformed_target="$MODEL_LINK_DIR/$malformed_rel_path"
+mkdir -p "$(dirname "$malformed_cache")" "$(dirname "$malformed_target")"
+printf 'not a safetensors file' > "$malformed_cache"
+ln -s "$malformed_cache" "$malformed_target"
+malformed_sha="$(sha256sum "$malformed_cache" | awk '{print $1}')"
+assert_failure "malformed safetensors must not be treated as ready even when sha matches" is_model_ready "$malformed_target" "$malformed_cache" "$malformed_sha"
+
+if ! grep -q 'MSJH_MODEL_PREFETCH_MODE:-foreground' "$INIT_SCRIPT"; then
+    echo "FAIL: model prefetch must default to foreground before ComfyUI starts" >&2
+    exit 1
+fi
 
 echo "model_prefetch_test passed"
