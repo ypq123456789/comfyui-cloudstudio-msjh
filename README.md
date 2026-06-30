@@ -1,3 +1,40 @@
+# MoRanJiangHu Cloud Studio ComfyUI Backend
+
+本仓库是墨色江湖云端 ComfyUI 生图后端的 Cloud Studio 迁移版。CNB 只作为历史来源，后续维护以 Cloud Studio 为准。
+
+## Cloud Studio 快速启动
+
+1. 在 Cloud Studio 导入 GitHub 私有仓库 `ypq123456789/comfyui-cloudstudio-msjh`。
+2. 打开工作空间后，在终端运行：
+
+```bash
+bash cloudstudio_start.sh
+```
+
+3. 确认 Cloud Studio 的端口/预览面板开放 `8188`。
+4. 如果脚本没有自动识别公网预览地址，手动设置：
+
+```bash
+export CLOUDSTUDIO_IMAGE_BACKEND_URL="https://你的-8188-预览地址"
+bash cloudstudio_sync.sh
+```
+
+5. 回到墨色江湖的文生图设置，选择 ComfyUI，刷新“云端 ComfyUI 后端”，用自动连接口令筛选自己的后端。
+
+### 环境变量
+
+| 变量 | 用途 |
+| - | - |
+| `CLOUDSTUDIO_IMAGE_BACKEND_URL` | Cloud Studio 8188 公网预览地址，自动识别失败时手动填写 |
+| `CLOUDSTUDIO_IMAGE_BACKEND_CONNECT_TOKEN` | 墨色江湖自动发现筛选口令，不填时使用 Cloud Studio 用户名或 `USER` |
+| `CLOUDSTUDIO_IMAGE_BACKEND_PORT` | ComfyUI 端口，默认 `8188` |
+| `MSJH_IMAGE_BACKEND_SYNC_URL` | 上报地址，默认 `https://msjh.bacon.de5.net/api/image-backend/sync` |
+| `MSJH_IMAGE_BACKEND_SYNC_TOKEN` | 上报鉴权 token，应放在 Cloud Studio Secret 或本机环境变量 |
+
+不要把 Cloud Studio token、同步 token 或任何私密凭据提交进仓库。
+
+---
+
 # 云原生构建的[ComfyUI](https://github.com/comfyanonymous/ComfyUI)运行环境-多镜像协作-预装版
 
 [![](https://cnb.cool/cnb-xu/docs/-/git/raw/main/comfyui/badge/CNB.svg)](https://cnb.cool)

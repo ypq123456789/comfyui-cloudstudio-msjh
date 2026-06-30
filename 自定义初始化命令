@@ -472,6 +472,11 @@ code-server --install-extension Tencent-Cloud.coding-copilot
 # 真实启动命令
 # ============================================================
 
+if [ "${MSJH_SKIP_COMFYUI_AUTOSTART:-}" = "1" ]; then
+    echo "[Startup] MSJH_SKIP_COMFYUI_AUTOSTART=1，初始化完成后交给外部启动脚本继续"
+    exit 0
+fi
+
 PYTHON_BIN="${PYTHON_BIN:-python}"
 echo "[Startup] 正在启动 ComfyUI: $PYTHON_BIN /workspace/comfyui/main.py --listen 0.0.0.0 --port 8188 --enable-cors-header \"*\""
 cd /workspace/comfyui
