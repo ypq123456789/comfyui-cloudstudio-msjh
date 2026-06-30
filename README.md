@@ -4,22 +4,28 @@
 
 ## Cloud Studio 快速启动
 
-1. 在 Cloud Studio 导入 GitHub 私有仓库 `ypq123456789/comfyui-cloudstudio-msjh`。
-2. 打开工作空间后，在终端运行：
+1. 在 Cloud Studio 从 GitHub 导入仓库 `https://github.com/ypq123456789/comfyui-cloudstudio-msjh.git`。
+2. 创建应用/复刻工作区时，算力规格优先选择 `GPU T4`，工作区布局选择 `VS Code`。
+3. 本仓库已内置 Cloud Studio 运行配置：
+   - `.vscode/preview.yml` 会把主服务设置为 `8188`，并使用 `bash cloudstudio_start.sh` 作为启动命令。
+   - `.vscode/tasks.json` 会在 VS Code 工作区打开后拉起集成终端，自动运行 `bash cloudstudio_start.sh`。
+4. 如果首次打开时 Cloud Studio / VS Code 询问是否允许自动任务，请选择允许。若自动任务未触发，手动打开终端运行：
 
 ```bash
 bash cloudstudio_start.sh
 ```
 
-3. 确认 Cloud Studio 的端口/预览面板开放 `8188`。
-4. 如果脚本没有自动识别公网预览地址，手动设置：
+5. 确认 Cloud Studio 的端口/预览面板开放 `8188`。
+6. 如果脚本没有自动识别公网预览地址，手动设置：
 
 ```bash
 export CLOUDSTUDIO_IMAGE_BACKEND_URL="https://你的-8188-预览地址"
 bash cloudstudio_sync.sh
 ```
 
-5. 回到墨色江湖的文生图设置，选择 ComfyUI，刷新“云端 ComfyUI 后端”，用自动连接口令筛选自己的后端。
+7. 回到墨色江湖的文生图设置，选择 ComfyUI，刷新“云端 ComfyUI 后端”，用自动连接口令筛选自己的后端。
+
+更完整的 Cloud Studio 导入、T4 算力、VS Code 布局与验收步骤见 [CLOUDSTUDIO.md](CLOUDSTUDIO.md)。
 
 ### 环境变量
 

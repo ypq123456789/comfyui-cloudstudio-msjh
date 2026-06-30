@@ -1,0 +1,9 @@
+autoOpen: true
+apps:
+  - name: MoRanJiangHu ComfyUI
+    root: .
+    run: bash cloudstudio_start.sh
+    port: 8188
+    autoOpen: true
+    autoPreview: true
+    mainPort: true
