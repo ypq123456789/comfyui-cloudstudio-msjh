@@ -5,6 +5,35 @@
 # aria2c -x 4 -s 4 -c -d "/workspace/models/checkpoints" -o "ace_step_v1_3.5b.safetensors" "https://cnb.cool/ai-models/Comfy-Org/ACE-Step_ComfyUI_repackaged/-/lfs/f07cad74c4adce52ca14ca1bdf74cf3c14cbafb0823b95eca4459467fa369f40"
 
 # ============================================================
+# Tailscale SSH 远程访问 - 容器重启后自动恢复
+# ============================================================
+if command -v tailscaled >/dev/null 2>&1; then
+    mkdir -p /var/lib/tailscale /var/run/tailscale /run/sshd
+    # 配置 sshd 允许 root 登录
+    sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config 2>/dev/null
+    sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config 2>/dev/null
+    # 设置 root 密码（从环境变量读取，未设置则跳过；首次安装时用环境变量注入更安全）
+    if [ -n "${MSJH_SSH_ROOT_PASSWORD:-}" ]; then
+        echo "root:${MSJH_SSH_ROOT_PASSWORD}" | chpasswd 2>/dev/null
+    fi
+    # 启动 sshd
+    if ! pgrep -x sshd >/dev/null 2>&1; then
+        /usr/sbin/sshd 2>/dev/null
+    fi
+    # 启动 tailscaled（userspace-networking 模式，容器内无需 /dev/net/tun）
+    if ! pgrep -x tailscaled >/dev/null 2>&1; then
+        nohup tailscaled --tun=userspace-networking \
+            --state=/var/lib/tailscale/tailscaled.state \
+            --socket=/var/run/tailscale/tailscaled.sock \
+            --port=41641 > /tmp/tailscaled.log 2>&1 &
+        sleep 3
+    fi
+    # 自动恢复 Tailscale 连接（首次需浏览器授权，后续从 state 文件自动恢复）
+    tailscale up --hostname=cloudstudio-msjh --ssh=false >/tmp/tailscale_up.log 2>&1 &
+    echo "[Tailscale SSH] tailscaled + sshd 已启动，等待 Tailscale 网络就绪"
+fi
+
+# ============================================================
 # NSFW 检测模块补丁 - 禁用 NSFW 检测，防止进程被 kill
 # 原始 .so 文件在初始化时调用 C 级 exit() 导致进程退出
 # 解决方案：重命名 .so 文件，用纯 Python stub 替换
